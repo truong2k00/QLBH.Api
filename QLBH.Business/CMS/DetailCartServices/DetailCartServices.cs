@@ -1,10 +1,12 @@
-﻿using Microsoft.VisualStudio.Services.Identity;
+﻿using Microsoft.Identity.Client;
+using Microsoft.VisualStudio.Services.Identity;
 using QLBH.Models;
 using QLBH.Models.Entities;
 using QLBH.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -106,10 +108,30 @@ namespace QLBH.Business
             return await _detailCartRepository.DeleteAsync(ID);
         }
 
-        public async Task<DataResponse_DetailCart> Update(long accountId, DataRequest_DetailCart data)
+        public async Task<DataResponse_DetailCart> Update(long ID, DataRequest_DetailCart data)
         {
-            var Cart = await _cartRepository.GetAsync(record=>record.AccountID == accountId);
-            var 
+            var Cart = await _cartRepository.GetAsync(record => record.AccountID == data.AccountID);
+            var detail = await _detailCartRepository.GetAsync(record => record.CartID == Cart.ID);
+
+            if (detail != null)
+            {
+                var product = await _productRepository.GetAsync(record => record.ID == data.ProductID);
+                var priceproduct = product.Sale == false ? product.Price : product.Price * product.Price_Sale;
+                detail.ProductID = data.ProductID;
+                detail.Quantity = data.Quantity;
+                detail.Price = priceproduct;
+                detail.Cash = (decimal)data.Quantity * priceproduct;
+                await _detailCartRepository.UpdateAsync(detail);
+            }
+            return new DataResponse_DetailCart
+            {
+                AccountID = Cart.ID,
+                ProductID = detail.ProductID,
+                Quantity = detail.Quantity,
+                CartID = detail.CartID,
+                Price = detail.Price,
+                Cash = detail.Cash
+            };
         }
 
         public async Task<IEnumerable<DataResponse_DetailCart>> GetByAccount(long idUser)

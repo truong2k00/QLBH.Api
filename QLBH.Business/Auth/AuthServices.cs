@@ -19,6 +19,7 @@ using static QLBH.Commons.Common_Constants.Clames;
 using ErrorLogin = QLBH.Commons.Common_Constants.Login;
 using BCryptNet = BCrypt.Net.BCrypt;
 using ErrorRegister = QLBH.Commons.Common_Constants.Register_Create;
+using System.ComponentModel.DataAnnotations;
 
 namespace QLBH.Business
 {
@@ -26,31 +27,32 @@ namespace QLBH.Business
     {
         private readonly EmailSender _emailSender;
         private readonly IConfiguration _configuration;
-        private readonly AppDbContext _appDbContext;
         private readonly IBaseRepository<Account> _baseRepositoryAccount;
         private readonly IBaseRepository<RefeshToken> _baseRepositoryRefesh;
         private readonly IBaseRepository<Decentralization> _baseDeRepositoryDece;
         private readonly IBaseRepository<MailSetting> _baseRepositoryMailsetting;
+        private readonly IBaseRepository<Role> _baseRepositoryRole;
         private readonly IBaseRepository<ConfirmEmail> _baseRepositoryConfirm;
         private readonly ResponcesObject<DataResponseToken> _responObject;
 
         public AuthServices(EmailSender emailSender
-            , AppDbContext appDbContext, IConfiguration configuration
+            , IConfiguration configuration
             , ResponcesObject<DataResponseToken> responObject
             , IBaseRepository<Account> baseRepositoryAccount
+            , IBaseRepository<Role> baseRepositoryRole
             , IBaseRepository<MailSetting> baseRepositoryMailsetting
             , IBaseRepository<Decentralization> baseRepositoryDece
             , IBaseRepository<ConfirmEmail> baseRepositoryConfirm)
         {
             _emailSender = emailSender;
             _responObject = responObject;
-            _appDbContext = appDbContext;
             _configuration = configuration;
 
             _baseRepositoryConfirm = baseRepositoryConfirm;
             _baseDeRepositoryDece = baseRepositoryDece;
             _baseRepositoryAccount = baseRepositoryAccount;
             _baseRepositoryMailsetting = baseRepositoryMailsetting;
+            _baseRepositoryRole = baseRepositoryRole;
         }
 
         public async Task<DataResponseToken> GenenrateRquestToken(Account Account)
@@ -60,7 +62,7 @@ namespace QLBH.Business
             var RoleID = (await _baseDeRepositoryDece.GetAllAsync(record => record.AccountID == Account.ID && record.Deleted == false))
                 .Select(x => (long)x.role);
 
-            var roleName = string.Join(";", _appDbContext.Role.Where(record => RoleID.Contains(record.Role_ID)).Select(x => x.Role_Name));
+            var roleName = string.Join(";", _baseRepositoryRole.GetQueryable().Where(record => RoleID.Contains(record.Role_ID)).Select(x => x.Role_Name));
 
             var tokenDes = new SecurityTokenDescriptor
             {
@@ -122,7 +124,7 @@ namespace QLBH.Business
 
         public IEnumerable<Account> GetAccounts()
         {
-            return _appDbContext.Account.AsQueryable();
+            return _baseRepositoryAccount.GetQueryable();
         }
 
         public async Task<ResponcesObject<DataResponseToken>> Login(Request_Login request_Login)
@@ -130,7 +132,7 @@ namespace QLBH.Business
             if (request_Login.UserName.IsNullOrEmpty() || request_Login.Password.IsNullOrEmpty())
                 return _responObject.ResponcesError(StatusCodes.Status400BadRequest, ErrorLogin.Request_NULL, null);
 
-            if (_appDbContext.Account.Any(x => x.User_Name == request_Login.UserName || x.Email == request_Login.UserName && x.Deleted == false))
+            if (_baseRepositoryAccount.GetQueryable().Any(x => x.User_Name == request_Login.UserName || x.Email == request_Login.UserName && x.Deleted == false))
             {
                 var account = await _baseRepositoryAccount.GetAsync(x => x.User_Name == request_Login.UserName || x.Email == request_Login.UserName && x.Deleted == false);
                 bool CheckPass = BCryptNet.Verify(request_Login.Password, account.PassWord);
@@ -175,7 +177,7 @@ namespace QLBH.Business
             if (!IsValidateEmail(request_Register.Email))
                 return Tuple.Create(StatusCodes.Status402PaymentRequired, ErrorRegister.Error_Email_TYPE);
             //Phone account Checked
-            if (_appDbContext.Account.Any(x => x.Phone_Number == request_Register.Phone_Number && x.Deleted == false))
+            if (_baseRepositoryAccount.GetQueryable(record => record.Phone_Number == request_Register.Phone_Number && record.Deleted == false).Any())
                 return Tuple.Create(StatusCodes.Status402PaymentRequired, ErrorRegister.Phone_ERROR);
             else
             {
@@ -269,11 +271,11 @@ namespace QLBH.Business
                 }
             }
         }
-        public async Task<DataResponCode> Create_Code(string UserName)
+        public async Task<DataResponCode> Create_Code(string userName)
         {
             var mailSetting = await _baseRepositoryMailsetting.GetAsync(record => record.Code == EmailCode.XacThucDangKy);
-            var account = await _baseRepositoryAccount.GetAsync(record => record.User_Name == UserName && record.Deleted == false);
-            var confirm = _appDbContext.ConfirmEmail.Where(record => record.Account.ID == account.ID);
+            var account = await _baseRepositoryAccount.GetAsync(record => record.User_Name == userName && record.Deleted == false);
+            var confirm = _baseRepositoryConfirm.GetQueryable(record => record.Account.ID == account.ID);
             if (confirm != null)
             {
                 foreach (var item in confirm)
@@ -283,7 +285,7 @@ namespace QLBH.Business
                 await _baseRepositoryConfirm.UpdateAsync(confirm);
             }
             account.ConfirmEmail = MailSeeding.NewConfirmEmail(mailSetting, null);
-            _appDbContext.SaveChanges();
+            await _baseRepositoryAccount.UpdateAsync(account);
             if (account == null) return new DataResponCode
             {
                 Status = StatusCodes.Status404NotFound,

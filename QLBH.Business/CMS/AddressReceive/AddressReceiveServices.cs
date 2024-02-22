@@ -43,15 +43,6 @@ namespace QLBH.Business
             address.ConfirmEmail = MailSeeding.NewConfirmEmail(mailsetting, item.accountID);
             await _baseRepositoryAddress.CreateAsync(address);
             await SenderEmail(mailsetting, address);
-            return new Respon_AddressReceive
-            {
-                AddressID = address.ID,
-                Address = address.Address,
-                Phone = address.Phone,
-                Full_Name = address.Full_Name,
-                Describe = address.Describe,
-                Email = address.Email
-            };
         }
 
 
@@ -78,15 +69,6 @@ namespace QLBH.Business
             Entity.Describe = item.describe;
             Entity.Email = item.email;
             await _baseRepositoryAddress.UpdateAsync(Entity);
-            return new Respon_AddressReceive
-            {
-                AddressID = Entity.ID,
-                Address = Entity.Address,
-                Phone = Entity.Phone,
-                Full_Name = Entity.Full_Name,
-                Describe = Entity.Describe,
-                Email = Entity.Email
-            };
         }
 
         public PageResult<Respon_AddressReceive> GetAll(Pagination pagination, string KeyWord)

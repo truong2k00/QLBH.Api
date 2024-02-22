@@ -41,9 +41,9 @@ namespace QLBH.Api.Controllers
             return Ok(await _authServices.ConfirmCode(HttpContext.User.FindFirst(Clames.USER).Value, code));
         }
         [HttpPost("NewCode")]
-        public async Task<IActionResult> NewCode([FromForm] string Username)
+        public async Task<IActionResult> NewCode([FromForm] string username)
         {
-            return Ok(await _authServices.Create_Code(Username));
+            return Ok(await _authServices.Create_Code(username));
         }
     }
 }

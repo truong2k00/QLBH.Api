@@ -7,8 +7,7 @@ using QLBH.Commons.Responces;
 using static QLBH.Commons.ImageHepper;
 using QLBH.Commons.Common_Page;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualStudio.Services.Users;
-
+using Microsoft.VisualStudio.Services.Use
 namespace QLBH.Business
 {
     public class CommentProductServices : ICommentProduct<DataRequest_CommentProduct>

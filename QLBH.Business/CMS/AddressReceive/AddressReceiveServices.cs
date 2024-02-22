@@ -28,7 +28,7 @@ namespace QLBH.Business
             _baseRepositoryAddress = baseRepositoryAddress;
         }
         //create Address receive
-        public async Task<Respon_AddressReceive> Create(Request_AddressReceive item)
+        public async Task Create(Request_AddressReceive item)
         {
             Address_Receive address = new Address_Receive
             {
@@ -45,32 +45,31 @@ namespace QLBH.Business
             await SenderEmail(mailsetting, address);
             return new Respon_AddressReceive
             {
-                addressID = address.ID,
-                address = address.Address,
-                phone = address.Phone,
-                fullName = address.Full_Name,
-                describe = address.Describe,
-                email = address.Email
+                AddressID = address.ID,
+                Address = address.Address,
+                Phone = address.Phone,
+                Full_Name = address.Full_Name,
+                Describe = address.Describe,
+                Email = address.Email
             };
         }
 
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
             try
             {
                 var entity = await _baseRepositoryAddress.GetAsync(record => record.ID == ID);
                 entity.Deleted = true;
                 await _baseRepositoryAddress.UpdateAsync(entity);
-                return true;
             }
             catch
             {
-                return false;
+                throw;
             }
         }
 
-        public async Task<Respon_AddressReceive> Update(long ID, Request_AddressReceive item)
+        public async Task Update(long ID, Request_AddressReceive item)
         {
             var Entity = await _baseRepositoryAddress.GetAsync(record => record.ID == ID);
             Entity.Address = item.address;
@@ -81,12 +80,12 @@ namespace QLBH.Business
             await _baseRepositoryAddress.UpdateAsync(Entity);
             return new Respon_AddressReceive
             {
-                addressID = Entity.ID,
-                address = Entity.Address,
-                phone = Entity.Phone,
-                fullName = Entity.Full_Name,
-                describe = Entity.Describe,
-                email = Entity.Email
+                AddressID = Entity.ID,
+                Address = Entity.Address,
+                Phone = Entity.Phone,
+                Full_Name = Entity.Full_Name,
+                Describe = Entity.Describe,
+                Email = Entity.Email
             };
         }
 

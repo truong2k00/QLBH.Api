@@ -76,7 +76,7 @@ namespace QLBH.Business
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var secretKeyBytes = Encoding.UTF8.GetBytes(Configuration.GetSection(AppSettingKeys.AUTH_SECRET).Value);
             var RoleID = (await BaseDeRepositoryDece.GetAllAsync(record => record.AccountID == Account.ID && record.Deleted == false))
-                .Select(x => (long)x.role);
+                .Select(record => (long)record.RoleID);
 
             var roleName = string.Join(";", AppDbContext.Role.Where(record => RoleID.Contains(record.Role_ID)).Select(x => x.Role_Name));
 

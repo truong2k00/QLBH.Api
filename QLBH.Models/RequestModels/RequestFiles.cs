@@ -9,6 +9,6 @@ namespace QLBH.Models
 {
     public class RequestFiles
     {
-        public List<IFormFile> Files { get; set; }
+        public List<IFormFile> files { get; set; }
     }
 }

@@ -9,10 +9,10 @@ namespace QLBH.Models
 {
     public class DataRequest_MailSetting
     {
-        public EmailCode Code { get; set; }
-        public string TieuDe { get; set; }
-        public string NoiDung { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public EmailCode code { get; set; }
+        public string tieuDe { get; set; }
+        public string noiDung { get; set; }
+        public string title { get; set; }
+        public string description { get; set; }
     }
 }

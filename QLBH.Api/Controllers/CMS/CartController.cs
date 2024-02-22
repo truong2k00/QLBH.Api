@@ -24,17 +24,41 @@ namespace QLBH.Api.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromQuery] DataRequest_Cart data)
         {
-            return Ok(await _cartServices.Create(data));
+            try
+            {
+                await _cartServices.Create(data);
+                return Ok(SUCCESS);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPut("Update/{Id}")]
         public async Task<IActionResult> Update(long Id, [FromQuery] DataRequest_Cart data)
         {
-            return Ok(await _cartServices.Update(Id, data));
+            try
+            {
+                await _cartServices.Update(Id, data);
+                return Ok(SUCCESS);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> Delete(long Id)
         {
-            return Ok(await _cartServices.Delete(Id));
+            try
+            {
+                await _cartServices.Delete(Id);
+                return Ok(SUCCESS);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpGet("GetAllCart")]
         public async Task<IActionResult> GetByAccount()
@@ -49,25 +73,40 @@ namespace QLBH.Api.Controllers
             return Ok(await _detailCartServices.GetByAccount(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value)));
         }
         [HttpPost("Details/Create")]
-        public async Task<IActionResult> Create([FromQuery] DataRequest_DetailCart dataRequest_DetailCart)
+        public async Task Create([FromQuery] DataRequest_DetailCart dataRequest_DetailCart)
         {
-            return Ok(await _detailCartServices.Create(dataRequest_DetailCart));
+            try
+            {
+                await _detailCartServices.Create(dataRequest_DetailCart);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
-        [HttpPost("Details/addCart")]
+        [HttpPost("Details/addCart/{meta}")]
         [Authorize]
-        public async Task<IActionResult> AddCard()
+        public async Task<IActionResult> AddCard(string meta)
         {
-            return Ok(await _detailCartServices.AddCart(dataRequest_DetailCart));
+            try
+            {
+                await _detailCartServices.AddCart(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), meta);
+                return Ok(SUCCESS);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPut("Details/Update/{ID}")]
-        public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_DetailCart dataRequest_DetailCart)
+        public async Task Update(long ID, [FromQuery] DataRequest_DetailCart dataRequest_DetailCart)
         {
-            return Ok(await _detailCartServices.Update(ID, dataRequest_DetailCart));
+            await _detailCartServices.Update(ID, dataRequest_DetailCart);
         }
         [HttpDelete("Details/Delete/{ID}")]
-        public async Task<IActionResult> DetailDelete(long ID)
+        public async Task DetailDelete(long ID)
         {
-            return Ok(await _detailCartServices.Delete(ID));
+            await _detailCartServices.Delete(ID);
         }
     }
 }

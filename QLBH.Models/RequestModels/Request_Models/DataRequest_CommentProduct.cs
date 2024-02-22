@@ -10,8 +10,8 @@ namespace QLBH.Models
 {
     public class DataRequest_CommentProduct
     {
-        public long AccountID { get; set; }
-        public long ProductID { get; set; }
-        public string Opinion { get; set; }
+        public long accountID { get; set; }
+        public long productID { get; set; }
+        public string opinion { get; set; }
     }
 }

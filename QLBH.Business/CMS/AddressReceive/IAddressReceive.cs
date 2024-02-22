@@ -8,7 +8,7 @@ using QLBH.Models;
 
 namespace QLBH.Business
 {
-    public interface IAddressReceive<TEntity,Bind> : IReponsitory<Request_AddressReceive,Respon_AddressReceive,long>
+    public interface IAddressReceive<TEntity,Bind> : IReponsitory<Request_AddressReceive,long>
     {
         PageResult<TEntity> GetAll(Pagination pagination,string KeyWord);
         PageResult<TEntity> GetAll(long? AccountID, Pagination pagination, string KeyWord);

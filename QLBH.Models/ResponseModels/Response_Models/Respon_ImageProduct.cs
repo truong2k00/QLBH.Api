@@ -8,6 +8,6 @@ namespace QLBH.Models
 {
     public class Respon_ImageProduct
     {
-        public string Image_Url { get; set; }
+        public string imageUrl { get; set; }
     }
 }

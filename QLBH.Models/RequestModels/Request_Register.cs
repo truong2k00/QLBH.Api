@@ -8,11 +8,11 @@ namespace QLBH.Models
 {
     public class Request_Register
     {
-        public string Full_Name { get; set; }
-        public string User_Name { get; set; }
-        public string PassWord { get; set; }
-        public string NewPassword { get; set; }
-        public string Phone_Number { get; set; }
-        public string Email { get; set; }
+        public string fullName { get; set; }
+        public string userName { get; set; }
+        public string passWord { get; set; }
+        public string newPassword { get; set; }
+        public string phone_Number { get; set; }
+        public string email { get; set; }
     }
 }

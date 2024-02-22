@@ -8,7 +8,7 @@ namespace QLBH.Models
 {
     public class DataResponse_Role
     {
-        public long Role_ID { get; set; }
-        public string Role_Name { get; set; }
+        public long roleID { get; set; }
+        public string roleName { get; set; }
     }
 }

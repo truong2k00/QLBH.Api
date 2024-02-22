@@ -8,8 +8,8 @@ namespace QLBH.Models
 {
     public class DataRequest_DetailProduct
     {
-        public string Introduce { get; set; }
-        public string Detail_Introduce { get; set; }
-        public long ProductID { get; set; }
+        public string introduce { get; set; }
+        public string detail_Introduce { get; set; }
+        public long productID { get; set; }
     }
 }

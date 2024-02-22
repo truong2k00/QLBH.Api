@@ -9,8 +9,8 @@ namespace QLBH.Models
 {
     public class DataRequest_TypeProduct
     {
-        public string Type_Name { get; set; }
-        public IFormFile Image { get; set; }
-        public long ProductID { get; set; }
+        public string type_Name { get; set; }
+        public IFormFile image { get; set; }
+        public long productID { get; set; }
     }
 }

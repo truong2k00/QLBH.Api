@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QLBH.Business
 {
-    public interface ICartServices : IReponsitory<DataRequest_Cart,DataResponse_Cart,long>
+    public interface ICartServices : IReponsitory<DataRequest_Cart,long>
     {
         Task<IEnumerable<Cart>> GetAllCart();
     }

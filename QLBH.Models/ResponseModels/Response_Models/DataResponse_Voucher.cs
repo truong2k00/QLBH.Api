@@ -8,15 +8,15 @@ namespace QLBH.Models
 {
     public class DataResponse_Voucher
     {
-        public long ID { get; set; }
-        public string VoucherId { get; set; }
-        public string VoucherName { get; set; }
-        public DateTime Release_Date { get; set; }
-        public DateTime Expiration_Date { get; set; }
-        public long Quantity { get; set; }
-        public decimal Reducted_Value { get; set; }
-        public long AccountID { get; set; }
-        public string UserName { get; set; }
-        public bool Work { get; set; }
+        public long voucherID { get; set; }
+        public string voucher { get; set; }
+        public string voucherName { get; set; }
+        public DateTime releaseDate { get; set; }
+        public DateTime expirationDate { get; set; }
+        public long quantity { get; set; }
+        public decimal reducted_Value { get; set; }
+        public long accountID { get; set; }
+        public string userName { get; set; }
+        public bool work { get; set; }
     }
 }

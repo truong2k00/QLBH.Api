@@ -9,7 +9,7 @@ using QLBH.Models;
 
 namespace QLBH.Business
 {
-    public interface ICommentProduct<TEntity> : IReponsitory<DataRequest_CommentProduct, DataRespon_CommentProduct, long>
+    public interface ICommentProduct<TEntity> : IReponsitory<DataRequest_CommentProduct, long>
     {
         Task<ResponcesObject<DataRespon_CommentProduct>> CreateAsync(TEntity entity, RequestFiles File);
         Task<bool> DeleteAsync(long accountId, long id);

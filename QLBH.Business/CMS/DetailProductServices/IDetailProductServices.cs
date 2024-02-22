@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QLBH.Business
 {
-    public interface IDetailProductServices : IReponsitory<DataRequest_DetailProduct,DataResponse_DetailProduct,long>
+    public interface IDetailProductServices : IReponsitory<DataRequest_DetailProduct, long>
     {
         Task<DataResponse_DetailProduct> CreateAsync(long accountId, DataRequest_DetailProduct data);
     }

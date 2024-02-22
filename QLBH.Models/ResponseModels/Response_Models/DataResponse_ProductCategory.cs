@@ -8,8 +8,8 @@ namespace QLBH.Models
 {
     public class DataResponse_ProductCategory
     {
-        public string CategoryName { get; set; }
-        public string Image { get; set; }
-        public long ID { get; set; }
+        public string categoryName { get; set; }
+        public string image { get; set; }
+        public long productCategoryID { get; set; }
     }
 }

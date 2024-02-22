@@ -10,9 +10,9 @@ namespace QLBH.Models
 {
     public class DataRequest_InvoidDetails
     {
-        public long ProductID { get; set; }
-        public long Quantity { get; set; }
-        public decimal UnitPrice { get; set; }
-        public decimal Price { get; set; }
+        public long productID { get; set; }
+        public long quantity { get; set; }
+        public decimal unitPrice { get; set; }
+        public decimal price { get; set; }
     }
 }

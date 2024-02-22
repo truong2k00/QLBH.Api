@@ -22,7 +22,7 @@ namespace QLBH.Business
             _baseRepositoryFeedback = baseRepositoryFeedback;
         }
 
-        public async Task<Response_Feedback> Create(Request_Feedback item)
+        public async Task Create(Request_Feedback item)
         {
             var product = await _baseRepositoryProduct.GetAsync(record => record.ID == item.IDProduct);
             product.FeedBack = new List<FeedBack>
@@ -37,12 +37,6 @@ namespace QLBH.Business
             };
             product.Evaluate = EvaluateStar(product.FeedBack.Select(x => (int)x.star).ToList());
             await _baseRepositoryProduct.UpdateAsync(product);
-            return new Response_Feedback
-            {
-                FeedBack_Quality = item.FeedBack_Quality,
-                Opinion = item.Opinion,
-                Star = item.Star,
-            };
         }
         private decimal EvaluateStar(List<int> ints)
         {
@@ -53,7 +47,7 @@ namespace QLBH.Business
             }
             return (decimal)(result / ints.Count());
         }
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
             var feedback = await _baseRepositoryFeedback.GetByIDAsync(ID);
             var product = await _baseRepositoryProduct.GetByIDAsync(feedback.Product.ID);
@@ -63,10 +57,9 @@ namespace QLBH.Business
                         .Select(item => (int)item.star).ToList();
             product.Evaluate = EvaluateStar(Stars);
             await _baseRepositoryProduct.UpdateAsync(product);
-            return checkDelete;
         }
 
-        public async Task<Response_Feedback> Update(long ID, Request_Feedback item)
+        public async Task Update(long ID, Request_Feedback item)
         {
             var entity = await _baseRepositoryFeedback.GetAsync(record => record.ID == ID);
             if (entity.AccountID == item.accountId)
@@ -76,12 +69,6 @@ namespace QLBH.Business
                 entity.Opinion = item.Opinion;
             }
             await _baseRepositoryFeedback.UpdateAsync(entity);
-            return new Response_Feedback
-            {
-                FeedBack_Quality = entity.FeedBack_Quality,
-                Opinion = entity.Opinion,
-                Star = entity.star,
-            };
         }
 
         public IEnumerable<Response_Feedback> Get(long accountId = 0, long productId = 0)

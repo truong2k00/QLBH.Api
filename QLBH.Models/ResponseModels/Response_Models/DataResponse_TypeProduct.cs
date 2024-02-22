@@ -10,8 +10,8 @@ namespace QLBH.Models
     public class DataResponse_TypeProduct
     {
         public long ID { get; set; }
-        public string Type_Name { get; set; }
-        public string Image { get; set; }
-        public long ProductID { get; set; }
+        public string typeName { get; set; }
+        public string image { get; set; }
+        public long productID { get; set; }
     }
 }

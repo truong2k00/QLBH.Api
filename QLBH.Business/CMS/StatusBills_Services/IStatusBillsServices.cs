@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QLBH.Business
 {
-    public interface IStatusBillsServices : IReponsitory<DataRequest_StatusBill, DataResponse_StatusBill, long>
+    public interface IStatusBillsServices : IReponsitory<DataRequest_StatusBill, long>
     {
         Task<IEnumerable<DataResponse_StatusBill>> GetAll();
     }

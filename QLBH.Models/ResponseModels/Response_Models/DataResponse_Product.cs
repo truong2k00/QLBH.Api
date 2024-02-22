@@ -10,10 +10,10 @@ namespace QLBH.Models
 {
     public class DataResponse_Product : Request_Product
     {
-        public long Product_ID { get; set; }
-        public string Username { get; set; }
-        public string Meta_Product { get; set; }
-        public decimal Evaluate { get; set; }
-        public List<Respon_ImageProduct> ImageProduct { get; set; }
+        public long productID { get; set; }
+        public string username { get; set; }
+        public string metaProduct { get; set; }
+        public decimal evaluate { get; set; }
+        public List<Respon_ImageProduct> imageProduct { get; set; }
     }
 }

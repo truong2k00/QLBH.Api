@@ -53,42 +53,20 @@ namespace QLBH.Business
             }
         }
 
-        public async Task<DataResponse_DetailCart> Create(DataRequest_DetailCart data)
+        public async Task Create(DataRequest_DetailCart data)
         {
-            var Cart = await _cartRepository.GetAsync(record => record.AccountID == data.AccountID);
-            var product = await _productRepository.GetByIDAsync(data.ProductID);
+            var Cart = await _cartRepository.GetAsync(record => record.AccountID == data.accountID);
+            var product = await _productRepository.GetByIDAsync(data.productID);
             var entity = new Detail_Cart
             {
                 Cart = Cart,
-                ProductID = data.ProductID,
-                Quantity = data.Quantity,
+                ProductID = data.productID,
+                Quantity = data.quantity,
                 Price = product.Price,
-                Cash = (decimal)data.Quantity * product.Price,
+                Cash = (decimal)data.quantity * product.Price,
             };
             await _detailCartRepository.CreateAsync(entity);
-            var dataproduct = _productRepository.GetQueryable(record => record.ID == data.ProductID);
-            return new DataResponse_DetailCart
-            {
-                CartID = entity.CartID,
-                ProductID = (long)entity.ProductID,
-                Quantity = entity.Quantity,
-                Price = entity.Price,
-                DataResponse_Product = dataproduct.Select(item => new DataResponse_Product
-                {
-                    Meta_Product = item.Meta_Product,
-                    Product_ID = item.ID,
-                    Username = item.Account.User_Name,
-                    Product_Name = item.Product_Name,
-                    Product_Description = item.Product_Description,
-                    Is_New = item.Is_New,
-                    Quantity = item.Quantity,
-                    Price = item.Price,
-                    Sale = item.Sale,
-                    Price_Sale = item.Price_Sale,
-                    Evaluate = item.Evaluate,
-                    ImageProduct = imageURL(item.ImageProduct.ToList())
-                }).AsEnumerable()
-            };
+            var dataproduct = _productRepository.GetQueryable(record => record.ID == data.productID);
         }
         private static List<Respon_ImageProduct> imageURL(List<ImageProduct> images)
         {
@@ -98,40 +76,31 @@ namespace QLBH.Business
             {
                 listimage.Add(new Respon_ImageProduct
                 {
-                    Image_Url = image.Image_Url
+                    imageUrl = image.Image_Url
                 });
             }
             return listimage;
         }
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
-            return await _detailCartRepository.DeleteAsync(ID);
+            await _detailCartRepository.DeleteAsync(ID);
         }
 
-        public async Task<DataResponse_DetailCart> Update(long ID, DataRequest_DetailCart data)
+        public async Task Update(long ID, DataRequest_DetailCart data)
         {
-            var Cart = await _cartRepository.GetAsync(record => record.AccountID == data.AccountID);
+            var Cart = await _cartRepository.GetAsync(record => record.AccountID == data.accountID);
             var detail = await _detailCartRepository.GetAsync(record => record.CartID == Cart.ID);
 
             if (detail != null)
             {
-                var product = await _productRepository.GetAsync(record => record.ID == data.ProductID);
+                var product = await _productRepository.GetAsync(record => record.ID == data.productID);
                 var priceproduct = product.Sale == false ? product.Price : product.Price * product.Price_Sale;
-                detail.ProductID = data.ProductID;
-                detail.Quantity = data.Quantity;
+                detail.ProductID = data.productID;
+                detail.Quantity = data.quantity;
                 detail.Price = priceproduct;
-                detail.Cash = (decimal)data.Quantity * priceproduct;
+                detail.Cash = (decimal)data.quantity * priceproduct;
                 await _detailCartRepository.UpdateAsync(detail);
             }
-            return new DataResponse_DetailCart
-            {
-                AccountID = Cart.ID,
-                ProductID = detail.ProductID,
-                Quantity = detail.Quantity,
-                CartID = detail.CartID,
-                Price = detail.Price,
-                Cash = detail.Cash
-            };
         }
 
         public async Task<IEnumerable<DataResponse_DetailCart>> GetByAccount(long idUser)
@@ -140,11 +109,11 @@ namespace QLBH.Business
             var Data = await _detailCartRepository.GetAllAsync(record => record.CartID == DataCart.ID);
             return Data.Select(item => new DataResponse_DetailCart
             {
-                CartID = item.CartID,
-                ProductID = (long)item.ProductID,
-                Quantity = item.Quantity,
-                Price = item.Price,
-                DataResponse_Product = ByIDProduct(item.ProductID),
+                cartID = item.CartID,
+                productID = (long)item.ProductID,
+                quantity = item.Quantity,
+                price = item.Price,
+                dataResponseProduct = ByIDProduct(item.ProductID),
             });
         }
         public IEnumerable<DataResponse_Product> ByIDProduct(long? IDproduct)
@@ -152,18 +121,18 @@ namespace QLBH.Business
             var Data = _productRepository.GetQueryable(record => record.ID == IDproduct);
             return Data.Select(item => new DataResponse_Product
             {
-                Meta_Product = item.Meta_Product,
-                Product_ID = item.ID,
-                Username = item.Account.User_Name,
-                Product_Name = item.Product_Name,
-                Product_Description = item.Product_Description,
-                Is_New = item.Is_New,
-                Quantity = item.Quantity,
-                Price = item.Price,
-                Sale = item.Sale,
-                Price_Sale = item.Price_Sale,
-                Evaluate = item.Evaluate,
-                ImageProduct = imageURL(item.ImageProduct.ToList())
+                metaProduct = item.Meta_Product,
+                productID = item.ID,
+                username = item.Account.User_Name,
+                product_Name = item.Product_Name,
+                productDescription = item.Product_Description,
+                isNew = item.Is_New,
+                quantity = item.Quantity,
+                price = item.Price,
+                sale = item.Sale,
+                priceSale = item.Price_Sale,
+                evaluate = item.Evaluate,
+                imageProduct = imageURL(item.ImageProduct.ToList())
             }).AsEnumerable();
         }
     }

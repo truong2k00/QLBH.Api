@@ -9,7 +9,7 @@ namespace QLBH.Models
 {
     public class DataRequest_Decenlization
     {
-        public long AccountID { get; set; }
+        public long accountID { get; set; }
         public RoleType role { get; set; }
     }
 }

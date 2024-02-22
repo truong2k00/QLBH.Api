@@ -10,10 +10,10 @@ namespace QLBH.Models
 {
     public class Response_ConfirmEmail
     {
-        public string CodeiVerification { get; set; }
-        public DateTime Expired { get; set; }
-        public bool IsConfirmed { get; set; }
-        public string UserName { get; set; }
-        public long MailSettingID { get; set; }
+        public string codeiVerification { get; set; }
+        public DateTime expired { get; set; }
+        public bool isConfirmed { get; set; }
+        public string userName { get; set; }
+        public long mailSettingID { get; set; }
     }
 }

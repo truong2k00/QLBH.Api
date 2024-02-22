@@ -10,7 +10,7 @@ namespace QLBH.Models
 {
     public class Request_ImageProduct
     {
-        public long Product_ID { get; set; }
+        public long product_ID { get; set; }
         public IFormFile file { get;set; }
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QLBH.Business
 {
-    public interface INotificationServices : IReponsitory<DataRequest_Notification, DataResponse_Notification, long>
+    public interface INotificationServices : IReponsitory<DataRequest_Notification, long>
     {
         Task<IEnumerable<DataResponse_Notification>> GetAll();
         Task<DataResponse_Notification> Watched(long id);

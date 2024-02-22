@@ -9,10 +9,10 @@ namespace QLBH.Models
 {
     public class DataRequest_Feedback
     {
-        public string FeedBack_Quality { get; set; }
-        public string Opinion { get; set; }
+        public string feedBack_Quality { get; set; }
+        public string opinion { get; set; }
         public Star star { get; set; }
-        public long AccountID { get; set; }
-        public long ProductID { get; set; }
+        public long accountID { get; set; }
+        public long productID { get; set; }
     }
 }

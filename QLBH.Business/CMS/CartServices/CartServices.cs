@@ -13,7 +13,7 @@ namespace QLBH.Business
             _cartRepository = cartRepository;
         }
 
-        public async Task<DataResponse_Cart> Create(DataRequest_Cart data)
+        public async Task Create(DataRequest_Cart data)
         {
             if (!_cartRepository.GetQueryable(record => record.AccountID == data.AccountID).Any())
             {
@@ -22,15 +22,11 @@ namespace QLBH.Business
                     AccountID = data.AccountID
                 };
                 await _cartRepository.CreateAsync(entity);
-                return new DataResponse_Cart
-                {
-                    AccountID = entity.AccountID
-                };
             }
             throw new Exception("Cannot be empty");
         }
 
-        public Task<bool> Delete(long ID)
+        public Task Delete(long ID)
         {
             throw new Exception("Is not allowed");
         }
@@ -40,7 +36,7 @@ namespace QLBH.Business
             return await _cartRepository.GetAllAsync();
         }
 
-        public Task<DataResponse_Cart> Update(long ID, DataRequest_Cart data)
+        public Task Update(long ID, DataRequest_Cart data)
         {
             throw new Exception("Is not allowed");
         }

@@ -8,6 +8,6 @@ namespace QLBH.Models
 {
     public class DataRequest_Cart
     {
-        public long AccountID { get; set; }
+        public long accountID { get; set; }
     }
 }

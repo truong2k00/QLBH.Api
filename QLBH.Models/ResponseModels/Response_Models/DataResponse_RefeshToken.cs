@@ -8,6 +8,6 @@ namespace QLBH.Models
 {
     public class DataResponse_RefeshToken : DataRequest_RefeshToken
     {
-        public long RefeshTokenID { get; set; }
+        public long refeshTokenID { get; set; }
     }
 }

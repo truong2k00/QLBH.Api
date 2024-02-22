@@ -8,7 +8,7 @@ namespace QLBH.Models
 {
     public class DataRespon_ImageComment : Request_ImageComment
     {
-        public long ImageCommentID { get; set; }
+        public long imageCommentID { get; set; }
         public string href { get; set; }
     }
 }

@@ -8,8 +8,8 @@ namespace QLBH.Models
 {
     public class Request_Pagination
     {
-        public int PageSize { get; set; } = 20;
-        public int PageNumber { get; set; }
-        public string KeyWord { get; set; }
+        public int pageSize { get; set; } = 20;
+        public int pageNumber { get; set; }
+        public string keyWord { get; set; }
     }
 }

@@ -8,6 +8,6 @@ namespace QLBH.Models
 {
     public class DataRequest_StatusBill
     {
-        public string Status_Name { get; set; }
+        public string status_Name { get; set; }
     }
 }

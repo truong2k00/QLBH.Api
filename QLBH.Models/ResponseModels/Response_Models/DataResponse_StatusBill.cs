@@ -8,6 +8,6 @@ namespace QLBH.Models
 {
     public class DataResponse_StatusBill : DataRequest_StatusBill
     {
-        public long StatusBillId { get; set; }
+        public long statusBillId { get; set; }
     }
 }

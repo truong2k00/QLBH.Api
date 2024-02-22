@@ -8,6 +8,6 @@ namespace QLBH.Models
 {
     public class Request_ImageComment
     {
-        public long Comment_ProductID { get; set; }
+        public long commentProductID { get; set; }
     }
 }

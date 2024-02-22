@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QLBH.Business
 {
-    public interface IDecentralizationServices : IReponsitory<DataRequest_Decenlization, DataResponse_Decenlization, long>
+    public interface IDecentralizationServices : IReponsitory<DataRequest_Decenlization, long>
     {
         IEnumerable<DataResponse_Decenlization> GetAllRole();
         DataResponse_Decenlization GetAllRole(long accountId);

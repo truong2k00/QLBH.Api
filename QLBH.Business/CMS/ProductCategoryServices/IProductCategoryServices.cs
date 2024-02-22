@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QLBH.Business.CMS
 {
-    public interface IProductCategoryServices : IReponsitory<DataRequest_ProductCategory, DataResponse_ProductCategory, long>
+    public interface IProductCategoryServices : IReponsitory<DataRequest_ProductCategory, long>
     {
         Task<IEnumerable<DataResponse_ProductCategory>> GetAll();
     }

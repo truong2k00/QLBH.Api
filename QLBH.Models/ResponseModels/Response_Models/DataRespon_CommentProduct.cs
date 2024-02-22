@@ -8,8 +8,8 @@ namespace QLBH.Models
 {
     public class DataRespon_CommentProduct
     {
-        public string User { get; set; }
-        public string Comment { get; set; }
-        public DateTime Date_create { get; set; }
+        public string user { get; set; }
+        public string comment { get; set; }
+        public DateTime datecreate { get; set; }
     }
 }

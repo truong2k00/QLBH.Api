@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QLBH.Business
 {
-    public interface IVoucherServices : IReponsitory<DataRequest_Voucher, DataResponse_Voucher, long>
+    public interface IVoucherServices : IReponsitory<DataRequest_Voucher, long>
     {
         IEnumerable<DataResponse_Voucher> GetVouchers();
         IEnumerable<DataResponse_Voucher> GetByIDAccount(long AccountID);

@@ -11,13 +11,13 @@ namespace QLBH.Models
 {
     public class Request_Product
     {
-        public string Product_Name { get; set; }
-        public string Product_Description { get; set; }
-        public long Category_ID { get; set; }
-        public bool Is_New { get; set; }
-        public bool Sale { get; set; }
-        public long Quantity { get; set; }
-        public long Price { get; set; }
-        public long Price_Sale { get; set; }
+        public string product_Name { get; set; }
+        public string productDescription { get; set; }
+        public long categoryID { get; set; }
+        public bool isNew { get; set; }
+        public bool sale { get; set; }
+        public long quantity { get; set; }
+        public long price { get; set; }
+        public long priceSale { get; set; }
     }
 }

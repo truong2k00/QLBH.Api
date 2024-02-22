@@ -9,8 +9,8 @@ namespace QLBH.Models
 {
     public class DataRequest_RefeshToken
     {
-        public string Token { get; set; }
-        public DateTime Date_Expired { get; set; }
-        public long AccountID { get; set; }
+        public string token { get; set; }
+        public DateTime dateExpired { get; set; }
+        public long accountID { get; set; }
     }
 }

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace QLBH.Business
 {
-    public interface IReponsitory<TEntity,REntity, Bind>
+    public interface IReponsitory<TEntity, Bind>
     {
-        Task<REntity> Create(TEntity data);
-        Task<REntity> Update(Bind ID,TEntity data);
-        Task<bool> Delete(Bind ID);
+        Task Create(TEntity data);
+        Task Update(Bind ID,TEntity data);
+        Task Delete(Bind ID);
     }
 }

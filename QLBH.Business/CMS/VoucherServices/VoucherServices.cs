@@ -1,4 +1,5 @@
-﻿using QLBH.Models;
+﻿using Microsoft.Identity.Client;
+using QLBH.Models;
 using QLBH.Models.Entities;
 using QLBH.Repository;
 
@@ -13,110 +14,84 @@ namespace QLBH.Business
             _repository = repository;
         }
 
-        public async Task<DataResponse_Voucher> Create(DataRequest_Voucher data)
+        public async Task Create(DataRequest_Voucher data)
         {
             var Entity = new Voucher
             {
                 VoucherId = Guid.NewGuid().ToString(),
-                AccountID = data.AccountID,
-                VoucherName = data.VoucherName,
+                AccountID = data.accountID,
+                VoucherName = data.voucherName,
                 Release_Date = DateTime.Now,
-                Expiration_Date = DateTime.Now.AddDays(data.Expiration_Date),
-                Quantity = data.Quantity,
+                Expiration_Date = DateTime.Now.AddDays(data.expirationDate),
+                Quantity = data.quantity,
                 Deleted = false,
-                Reducted_Value = data.Reducted_Value,
+                Reducted_Value = data.reductedValue,
                 Work = false
             };
             var Data = await _repository.CreateAsync(Entity);
-            return new DataResponse_Voucher
-            {
-                ID = Data.ID,
-                VoucherId = Data.VoucherId,
-                VoucherName = Data.VoucherName,
-                Release_Date = Data.Release_Date,
-                Expiration_Date = Data.Expiration_Date,
-                Quantity = Data.Quantity,
-                Reducted_Value = Data.Reducted_Value,
-                AccountID = Data.AccountID,
-                Work = Data.Work,
-            };
         }
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
             try
             {
                 var Entity = await _repository.GetByIDAsync(ID);
                 Entity.Deleted = true;
                 await _repository.UpdateAsync(Entity);
-                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                throw new Exception(ex.Message);
             }
         }
 
-        public async Task<DataResponse_Voucher> GetByID(long ID)
+        public async Task<DataResponse_Voucher> GetByID(long iD)
         {
-            var Data = await _repository.GetByIDAsync(ID);
+            var data = await _repository.GetAsync(record => record.ID == iD);
             return new DataResponse_Voucher
             {
-                ID = Data.ID,
-                VoucherId = Data.VoucherId,
-                VoucherName = Data.VoucherName,
-                Release_Date = Data.Release_Date,
-                Expiration_Date = Data.Expiration_Date,
-                Quantity = Data.Quantity,
-                Reducted_Value = Data.Reducted_Value,
-                AccountID = Data.AccountID,
-                Work = Data.Work,
+                voucherID = data.ID,
+                voucher = data.VoucherId,
+                voucherName = data.VoucherName,
+                releaseDate = data.Release_Date,
+                expirationDate = data.Expiration_Date,
+                quantity = data.Quantity,
+                reducted_Value = data.Reducted_Value,
+                accountID = data.AccountID,
+                work = data.Work,
             };
         }
 
-        public IEnumerable<DataResponse_Voucher> GetByIDAccount(long AccountID)
+        public IEnumerable<DataResponse_Voucher> GetAll(long accountID=0)
         {
-            var Query = _repository.GetQueryable(record=>record.AccountID == AccountID);
-            return Query.Select(item => new DataResponse_Voucher
+            var query = _repository.GetQueryable();
+            if (accountID != 0)
             {
-                ID = item.ID,
-                VoucherId = item.VoucherId,
-                VoucherName = item.VoucherName,
-                Release_Date = item.Release_Date,
-                Expiration_Date = item.Expiration_Date,
-                Quantity = item.Quantity,
-                Reducted_Value = item.Reducted_Value,
-                AccountID = item.AccountID,
-                UserName = item.Account.User_Name,
-                Work = item.Work,
-            });
-        }
-
-        public IEnumerable<DataResponse_Voucher> GetVouchers()
-        {
-            var Query = _repository.GetQueryable();
-            return Query.Select(item => new DataResponse_Voucher
-            {
-                ID = item.ID,
-                VoucherId = item.VoucherId,
-                VoucherName = item.VoucherName,
-                Release_Date = item.Release_Date,
-                Expiration_Date = item.Expiration_Date,
-                Quantity = item.Quantity,
-                Reducted_Value = item.Reducted_Value,
-                AccountID = item.AccountID,
-                UserName = item.Account.User_Name,
-                Work = item.Work,
-            });
-        }
-
-        public async Task<DataResponse_Voucher> Update(long ID, DataRequest_Voucher data)
-        {
-            if (await Delete(ID))
-            {
-                return await Create(data);
+                query = query.Where(record => record.AccountID == accountID);
             }
-            else return null;
+            return query.Select(item => new DataResponse_Voucher
+            {
+                voucherID = item.ID,
+                voucher = item.VoucherId,
+                voucherName = item.VoucherName,
+                releaseDate = item.Release_Date,
+                expirationDate = item.Expiration_Date,
+                quantity = item.Quantity,
+                reducted_Value = item.Reducted_Value,
+                accountID = item.AccountID,
+                userName = item.Account.User_Name,
+                work = item.Work,
+            });
+        }
+
+        public IEnumerable<DataResponse_Voucher> GetAll()
+        {
+            return GetAll(0);
+        }
+
+        public async Task Update(long ID, DataRequest_Voucher data)
+        {
+            await Delete(ID);
         }
     }
 }

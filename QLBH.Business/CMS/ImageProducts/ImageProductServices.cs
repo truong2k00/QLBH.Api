@@ -28,43 +28,38 @@ namespace QLBH.Business
             _baseRepositoryImgProduct = baseRepositoryImgProduct;
         }
 
-        public async Task<Respon_ImageProduct> Create(Request_ImageProduct item)
+        public async Task Create(Request_ImageProduct item)
         {
             ImageProduct image = new ImageProduct
             {
                 Image_Url = await _uploadImage.UploadImage(_httpContext.HttpContext.User.FindFirst("User").Value, item.file),
-                Product = await _baseRepositoryProduct.GetByIDAsync(item.Product_ID)
+                Product = await _baseRepositoryProduct.GetByIDAsync(item.product_ID)
             };
             await _baseRepositoryImgProduct.CreateAsync(image);
-            return new Respon_ImageProduct
-            {
-                Image_Url = image.Image_Url
-            };
         }
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
-            return await _baseRepositoryImgProduct.DeleteAsync(ID);
+            await _baseRepositoryImgProduct.DeleteAsync(ID);
         }
 
-        public async Task<IEnumerable<Respon_ImageProduct>> GetAllAsync(long IDProduct)
+        public IEnumerable<Respon_ImageProduct> GetAllAsync(long productID)
         {
-            var lisimageproduct = await _baseRepositoryImgProduct.GetAllAsync(x => x.Product.ID == IDProduct);
-            var lisimage = lisimageproduct.Select(record => new Respon_ImageProduct
+            var query = _baseRepositoryImgProduct.GetQueryable();
+            if (productID > 0)
             {
-                Image_Url = record.Image_Url
+                query = query.Where(record => record.Product.ID == productID);
+            }
+            var data = query.Select(record => new Respon_ImageProduct
+            {
+                imageUrl = record.Image_Url
             });
-            return lisimage;
+            return data;
         }
 
-        public async Task<IEnumerable<Respon_ImageProduct>> GetAllAsync()
+        public IEnumerable<Respon_ImageProduct> GetAllAsync()
         {
-            var lisimageproduct = await _baseRepositoryImgProduct.GetAllAsync();
-            var lisimage = lisimageproduct.Select(record => new Respon_ImageProduct
-            {
-                Image_Url = record.Image_Url
-            });
-            return lisimage;
+            return GetAllAsync(0);
         }
 
         public async Task<Respon_ImageProduct> GetByIDAsync(long ID)
@@ -72,25 +67,21 @@ namespace QLBH.Business
             var imagep = await _baseRepositoryImgProduct.GetAsync(record => record.ID == ID);
             return new Respon_ImageProduct
             {
-                Image_Url = imagep.Image_Url
+                imageUrl = imagep.Image_Url
             };
         }
 
-        public async Task<Respon_ImageProduct> Update(long ID, Request_ImageProduct item)
+        public async Task Update(long ID, Request_ImageProduct item)
         {
             var entityimage = await _baseRepositoryImgProduct.GetByIDAsync(ID);
             var entity = new ImageProduct
             {
                 Image_Url = await _uploadImage.UploadImage(
                     _httpContext.HttpContext.User.FindFirst(clames.USER).Value, item.file),
-                Product = await _baseRepositoryProduct.GetByIDAsync(item.Product_ID)
+                Product = await _baseRepositoryProduct.GetByIDAsync(item.product_ID)
             };
             await _baseRepositoryImgProduct.DeleteAsync(ID);
             await _baseRepositoryImgProduct.CreateAsync(entity);
-            return new Respon_ImageProduct
-            {
-                Image_Url = entityimage.Image_Url
-            };
         }
     }
 }

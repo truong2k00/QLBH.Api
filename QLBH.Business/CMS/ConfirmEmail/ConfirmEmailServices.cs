@@ -25,17 +25,17 @@ namespace QLBH.Business
             var query = _baseRepositoryConfirm.GetQueryable(record => record.AccountID == accountID);
             return query.Select(record => new Response_ConfirmEmail
             {
-                CodeiVerification = record.CodeiVerification,
-                Expired = record.Expired,
-                IsConfirmed = record.IsConfirmed,
-                UserName = record.Account.User_Name,
-                MailSettingID = record.MailSetting.ID
+                codeiVerification = record.CodeiVerification,
+                expired = record.Expired,
+                isConfirmed = record.IsConfirmed,
+                userName = record.Account.User_Name,
+                mailSettingID = record.MailSetting.ID
             });
         }
-        public async Task<DataResponCode> ConfirmEmail(string AccountName,int code)
+        public async Task<DataResponCode> ConfirmEmail(string AccountName, int code)
         {
             var Confirm = (await _baseRepositoryConfirm.GetAllAsync(record => record.Account.User_Name == AccountName && record.IsConfirmed == false && record.Expired >= DateTime.Now && record.Deleted == false)).Last();
-            if (Confirm == null) return new DataResponCode { Status = StatusCodes.Status404NotFound, Message = CodeVerification.Message_404_code };
+            if (Confirm == null) return new DataResponCode { status = StatusCodes.Status404NotFound, message = CodeVerification.Message_404_code };
             else
             {
                 if (Confirm.CodeiVerification == code.ToString())
@@ -45,16 +45,16 @@ namespace QLBH.Business
                     await _baseRepositoryConfirm.UpdateAsync(Confirm);
                     return new DataResponCode
                     {
-                        Status = StatusCodes.Status200OK,
-                        Message = SUCCESS
+                        status = StatusCodes.Status200OK,
+                        message = SUCCESS
                     };
                 }
                 else
                 {
                     return new DataResponCode
                     {
-                        Status = StatusCodes.Status408RequestTimeout,
-                        Message = CodeVerification.Message_408_code
+                        status = StatusCodes.Status408RequestTimeout,
+                        message = CodeVerification.Message_408_code
                     };
                 }
             }

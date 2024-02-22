@@ -9,8 +9,8 @@ namespace QLBH.Business
 {
     public interface INotificationServices : IReponsitory<DataRequest_Notification, long>
     {
-        Task<IEnumerable<DataResponse_Notification>> GetAll();
+        IEnumerable<DataResponse_Notification> GetAll();
         Task<DataResponse_Notification> Watched(long id);
-        Task<IEnumerable<DataResponse_Notification>> GetByAccount(long AccountID);
+        IEnumerable<DataResponse_Notification> GetAll(long AccountID);
     }
 }

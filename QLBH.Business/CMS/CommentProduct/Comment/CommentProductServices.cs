@@ -32,24 +32,18 @@ namespace QLBH.Business
             _repositoryComment = repositoryComment;
         }
 
-        public async Task<DataRespon_CommentProduct> Create(DataRequest_CommentProduct entity)
+        public async Task Create(DataRequest_CommentProduct entity)
         {
             try
             {
                 var comment = new Comment_Product
                 {
                     Datetime_Comment = DateTime.Now,
-                    Opinion = entity.Opinion,
-                    ProductID = entity.ProductID,
-                    AccountID = entity.AccountID
+                    Opinion = entity.opinion,
+                    ProductID = entity.productID,
+                    AccountID = entity.accountID
                 };
                 await _repositoryComment.CreateAsync(comment);
-                return new DataRespon_CommentProduct
-                {
-                    User = comment.Account.User_Name,
-                    Comment = comment.Opinion,
-                    Date_create = comment.Datetime_Comment,
-                };
             }
             catch (Exception ex)
             {
@@ -57,25 +51,19 @@ namespace QLBH.Business
             }
         }
 
-        public async Task<ResponcesObject<DataRespon_CommentProduct>> CreateAsync(
+        public async Task CreateAsync(
             DataRequest_CommentProduct entity, RequestFiles Files)
         {
             var comment = new Comment_Product
             {
                 Datetime_Comment = DateTime.Now,
-                Opinion = entity.Opinion,
-                ProductID = entity.ProductID,
-                AccountID = entity.AccountID
+                Opinion = entity.opinion,
+                ProductID = entity.productID,
+                AccountID = entity.accountID
             };
-            Account account = await _repositoryAccount.GetByIDAsync(entity.AccountID);
-            comment.Image_Comment = await GenerateImageComment("Comment", Files.Files);
+            Account account = await _repositoryAccount.GetByIDAsync(entity.accountID);
+            comment.Image_Comment = await GenerateImageComment("Comment", Files.files);
             await _repositoryComment.CreateAsync(comment);
-            return _dataRespon.ResponcesSuccess(Common_Constants.SUCCESS, new DataRespon_CommentProduct
-            {
-                User = account.User_Name,
-                Comment = comment.Opinion,
-                Date_create = comment.Datetime_Comment
-            });
         }
         private async Task<List<Image_Comment>> GenerateImageComment(string name, List<IFormFile> files)
         {
@@ -89,22 +77,16 @@ namespace QLBH.Business
             }
             return ListImage;
         }
-        public Task<bool> Delete(long ID)
+        public Task Delete(long ID)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<DataRespon_CommentProduct> Update(long ID, DataRequest_CommentProduct item)
+        public async Task Update(long ID, DataRequest_CommentProduct item)
         {
             var comment = await _repositoryComment.GetAsync(record => record.ID == ID);
-            comment.Opinion = item.Opinion;
+            comment.Opinion = item.opinion;
             await _repositoryComment.UpdateAsync(comment);
-            return new DataRespon_CommentProduct
-            {
-                User = comment.Account.User_Name,
-                Comment = comment.Opinion,
-                Date_create = comment.Datetime_Comment,
-            };
         }
 
         public PageResult<DataRespon_CommentProduct> GetAll(Pagination pagination, string KeyWord)
@@ -135,9 +117,9 @@ namespace QLBH.Business
             pagination.TotalCount = query.Count();
             var Data = query.Select(record => new DataRespon_CommentProduct
             {
-                User = record.Account.User_Name,
-                Comment = record.Opinion,
-                Date_create = record.Datetime_Comment
+                user = record.Account.User_Name,
+                opinion = record.Opinion,
+                datecreate = record.Datetime_Comment
 
             });
             var Result = PageResult<DataRespon_CommentProduct>.ToPageResult(pagination, Data);

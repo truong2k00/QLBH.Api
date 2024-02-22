@@ -14,7 +14,7 @@ namespace QLBH.Api.Controllers
     [ApiController]
     public class AddressReceiveController : ControllerBase
     {
-        private readonly IAddressReceive<Respon_AddressReceive,long> _addessReceive;
+        private readonly IAddressReceive<Respon_AddressReceive, long> _addessReceive;
 
         public AddressReceiveController(IAddressReceive<Respon_AddressReceive, long> addessReceive)
         {
@@ -24,21 +24,24 @@ namespace QLBH.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Create([FromBody] Request_AddressReceive request_AddessReceive)
         {
-            request_AddessReceive.AccountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
-            return Ok(await _addessReceive.Create(request_AddessReceive));
+            request_AddessReceive.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
+            await _addessReceive.Create(request_AddessReceive);
+            return Ok();
         }
         [HttpPost("Update/{AddressReceiveID}")]
         [Authorize]
         public async Task<IActionResult> UpdateAsync(long AddressReceiveID, [FromBody] Request_AddressReceive request_AddressReceive)
         {
-            request_AddressReceive.AccountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
-            return Ok(await _addessReceive.Update(AddressReceiveID, request_AddressReceive));
+            request_AddressReceive.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
+            await _addessReceive.Update(AddressReceiveID, request_AddressReceive);
+            return Ok();
         }
         [HttpDelete("Delete")]
         [Authorize]
         public async Task<IActionResult> DeleteAsync([FromBody] long AddressReceiveID)
         {
-            return Ok(await _addessReceive.Delete(AddressReceiveID));
+            await _addessReceive.Delete(AddressReceiveID);
+            return Ok();
         }
         [HttpGet("GetAll")]
         [Authorize(Roles = RoleKeyString.Admin)]
@@ -46,20 +49,20 @@ namespace QLBH.Api.Controllers
         {
             return Ok(_addessReceive.GetAll(new Pagination
             {
-                PageNumber = request_Pagination.PageNumber,
-                PageSize = request_Pagination.PageSize
-            }, request_Pagination.KeyWord));
+                PageNumber = request_Pagination.pageNumber,
+                PageSize = request_Pagination.pageSize
+            }, request_Pagination.keyWord));
         }
         [HttpGet("GetByID")]
         [Authorize]
         public IActionResult GetByID([FromBody] Request_Pagination request_Pagination)
         {
             return Ok(_addessReceive.GetAll(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value)
-                                            ,new Pagination
+                                            , new Pagination
                                             {
-                                                PageNumber = request_Pagination.PageNumber,
-                                                PageSize = request_Pagination.PageSize
-                                            }, request_Pagination.KeyWord));
+                                                PageNumber = request_Pagination.pageNumber,
+                                                PageSize = request_Pagination.pageSize
+                                            }, request_Pagination.keyWord));
         }
     }
 }

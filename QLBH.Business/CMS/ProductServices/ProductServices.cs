@@ -38,46 +38,31 @@ namespace QLBH.Business
             _baseRepositoryCategory = baseRepositoryCategory;
             _baseRepositoryAccount = baseRepositoryAccount;
         }
-        public async Task<DataResponse_Product> Create(Request_Product item, RequestFiles files)
+        public async Task Create(Request_Product item, RequestFiles files)
         {
             var account = await _baseRepositoryAccount.GetAsync(record => record.ID ==
                 long.Parse(_httpContextAccessor.HttpContext.User.FindFirst(clames.ID).Value));
             var product = new List<Product>();
             Product entity = new Product
             {
-                Product_Name = item.Product_Name,
-                Product_Description = item.Product_Description,
+                Product_Name = item.product_Name,
+                Product_Description = item.productDescription,
                 Meta_Product = Guid.NewGuid().ToString(),
-                ProductCatogory = await _baseRepositoryCategory.GetAsync(x => x.ID == item.Category_ID),
-                Is_New = item.Is_New,
-                Sale = item.Sale,
+                ProductCatogory = await _baseRepositoryCategory.GetAsync(x => x.ID == item.categoryID),
+                Is_New = item.isNew,
+                Sale = item.sale,
                 Date_Delete = null,
                 Is_Deleted = false,
-                Quantity = item.Quantity,
-                Price = item.Price,
-                Price_Sale = item.Price_Sale,
+                Quantity = item.quantity,
+                Price = item.price,
+                Price_Sale = item.priceSale,
                 Evaluate = 5,
                 Deleted = false,
-                ImageProduct = await GenerateImageProduct(files.Files)
+                ImageProduct = await GenerateImageProduct(files.files)
             };
             product.Add(entity);
             account.Product = product;
             await _baseRepositoryAccount.UpdateAsync(account);
-            return new DataResponse_Product
-            {
-                Meta_Product = entity.Meta_Product,
-                Product_ID = entity.ID,
-                Username = account.User_Name,
-                Product_Name = entity.Product_Name,
-                Product_Description = entity.Product_Description,
-                Is_New = entity.Is_New,
-                Quantity = entity.Quantity,
-                Price = entity.Price,
-                Sale = entity.Sale,
-                Price_Sale = entity.Price_Sale,
-                Evaluate = entity.Evaluate,
-                ImageProduct = imageURL(entity.ImageProduct.ToList())
-            };
         }
         private static List<Respon_ImageProduct> imageURL(List<ImageProduct> images)
         {
@@ -87,7 +72,7 @@ namespace QLBH.Business
             {
                 listimage.Add(new Respon_ImageProduct
                 {
-                    Image_Url = image.Image_Url
+                    imageUrl = image.Image_Url
                 });
             }
             return listimage;
@@ -105,26 +90,23 @@ namespace QLBH.Business
             }
             return productImages;
         }
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
             var product = await _appDbContext.Product.FirstOrDefaultAsync(x => x.ID == ID);
             product.Deleted = true;
             await _baseRepositoryProduct.UpdateAsync(product);
-            return true;
         }
-        public async Task<DataResponse_Product> Update(long IDProduct, Request_Product item, RequestFiles file)
+        public async Task Update(long IDProduct, Request_Product item, RequestFiles file)
         {
             var productEntity = await _baseRepositoryProduct.GetAsync(x => x.ID == IDProduct);
             if (productEntity != null)
             {
-                return null;
             }
             else
             {
                 productEntity.Deleted = true;
                 productEntity.Date_Delete = DateTime.Now;
                 await _baseRepositoryProduct.UpdateAsync(productEntity);
-                return await Create(item, file);
             }
         }
 
@@ -143,19 +125,19 @@ namespace QLBH.Business
             }
             var data = query.Select(item => new DataResponse_Product
             {
-                Meta_Product = item.Meta_Product,
-                Product_ID = item.ID,
-                Category_ID = item.ProductCatogoryID,
-                Username = item.Account != null ? item.Account.User_Name : null,
-                Product_Name = item.Product_Name,
-                Product_Description = item.Product_Description,
-                Is_New = item.Is_New,
-                Quantity = item.Quantity,
-                Price = item.Price,
-                Sale = item.Sale,
-                Price_Sale = item.Price_Sale,
-                Evaluate = item.Evaluate,
-                ImageProduct = imageURL(item.ImageProduct.ToList())
+                metaProduct = item.Meta_Product,
+                productID = item.ID,
+                categoryID = item.ProductCatogoryID,
+                username = item.Account != null ? item.Account.User_Name : null,
+                product_Name = item.Product_Name,
+                productDescription = item.Product_Description,
+                isNew = item.Is_New,
+                quantity = item.Quantity,
+                price = item.Price,
+                sale = item.Sale,
+                priceSale = item.Price_Sale,
+                evaluate = item.Evaluate,
+                imageProduct = imageURL(item.ImageProduct.ToList())
             });
             pagination.TotalCount = query.Count();
             var result = PageResult<DataResponse_Product>.ToPageResult(pagination, data);
@@ -166,20 +148,21 @@ namespace QLBH.Business
         {
             var query = _baseRepositoryProduct.GetQueryable(record => record.Deleted == false);
             query = query.Where(record => record.Sale == true);
-            var Data = query.Select(x => new DataResponse_Product
+            var Data = query.Select(item => new DataResponse_Product
             {
-                Meta_Product = x.Meta_Product,
-                Product_ID = x.ID,
-                Username = x.Account != null ? x.Account.User_Name : null,
-                Product_Name = x.Product_Name,
-                Product_Description = x.Product_Description,
-                Is_New = x.Is_New,
-                Quantity = x.Quantity,
-                Price = x.Price,
-                Sale = x.Sale,
-                Price_Sale = x.Price_Sale,
-                Evaluate = x.Evaluate,
-                ImageProduct = imageURL(x.ImageProduct.ToList())
+                metaProduct = item.Meta_Product,
+                productID = item.ID,
+                categoryID = item.ProductCatogoryID,
+                username = item.Account != null ? item.Account.User_Name : null,
+                product_Name = item.Product_Name,
+                productDescription = item.Product_Description,
+                isNew = item.Is_New,
+                quantity = item.Quantity,
+                price = item.Price,
+                sale = item.Sale,
+                priceSale = item.Price_Sale,
+                evaluate = item.Evaluate,
+                imageProduct = imageURL(item.ImageProduct.ToList())
             }).AsEnumerable();
             return Data;
         }
@@ -188,19 +171,19 @@ namespace QLBH.Business
             var query = _baseRepositoryProduct.GetQueryable(record => record.Meta_Product == meta);
             var Data = query.Select(item => new DataResponse_Product
             {
-                Meta_Product = item.Meta_Product,
-                Product_ID = item.ID,
-                Category_ID = item.ProductCatogoryID,
-                Username = item.Account != null ? item.Account.User_Name : null,
-                Product_Name = item.Product_Name,
-                Product_Description = item.Product_Description,
-                Is_New = item.Is_New,
-                Quantity = item.Quantity,
-                Price = item.Price,
-                Sale = item.Sale,
-                Price_Sale = item.Price_Sale,
-                Evaluate = item.Evaluate,
-                ImageProduct = imageURL(item.ImageProduct.ToList())
+                metaProduct = item.Meta_Product,
+                productID = item.ID,
+                categoryID = item.ProductCatogoryID,
+                username = item.Account != null ? item.Account.User_Name : null,
+                product_Name = item.Product_Name,
+                productDescription = item.Product_Description,
+                isNew = item.Is_New,
+                quantity = item.Quantity,
+                price = item.Price,
+                sale = item.Sale,
+                priceSale = item.Price_Sale,
+                evaluate = item.Evaluate,
+                imageProduct = imageURL(item.ImageProduct.ToList())
             }).AsEnumerable();
             return Data;
         }
@@ -215,19 +198,19 @@ namespace QLBH.Business
             }
             var data = query.Select(item => new DataResponse_Product
             {
-                Meta_Product = item.Meta_Product,
-                Product_ID = item.ID,
-                Category_ID = item.ProductCatogoryID,
-                Username = item.Account != null ? item.Account.User_Name : null,
-                Product_Name = item.Product_Name,
-                Product_Description = item.Product_Description,
-                Is_New = item.Is_New,
-                Quantity = item.Quantity,
-                Price = item.Price,
-                Sale = item.Sale,
-                Price_Sale = item.Price_Sale,
-                Evaluate = item.Evaluate,
-                ImageProduct = imageURL(item.ImageProduct.ToList())
+                metaProduct = item.Meta_Product,
+                productID = item.ID,
+                categoryID = item.ProductCatogoryID,
+                username = item.Account != null ? item.Account.User_Name : null,
+                product_Name = item.Product_Name,
+                productDescription = item.Product_Description,
+                isNew = item.Is_New,
+                quantity = item.Quantity,
+                price = item.Price,
+                sale = item.Sale,
+                priceSale = item.Price_Sale,
+                evaluate = item.Evaluate,
+                imageProduct = imageURL(item.ImageProduct.ToList())
             });
             pagination.TotalCount = query.Count();
             var result = PageResult<DataResponse_Product>.ToPageResult(pagination, data);
@@ -244,19 +227,19 @@ namespace QLBH.Business
             }
             var data = query.Select(item => new DataResponse_Product
             {
-                Meta_Product = item.Meta_Product,
-                Product_ID = item.ID,
-                Category_ID = item.ProductCatogoryID,
-                Username = item.Account != null ? item.Account.User_Name : null,
-                Product_Name = item.Product_Name,
-                Product_Description = item.Product_Description,
-                Is_New = item.Is_New,
-                Quantity = item.Quantity,
-                Price = item.Price,
-                Sale = item.Sale,
-                Price_Sale = item.Price_Sale,
-                Evaluate = item.Evaluate,
-                ImageProduct = imageURL(item.ImageProduct.ToList())
+                metaProduct = item.Meta_Product,
+                productID = item.ID,
+                categoryID = item.ProductCatogoryID,
+                username = item.Account != null ? item.Account.User_Name : null,
+                product_Name = item.Product_Name,
+                productDescription = item.Product_Description,
+                isNew = item.Is_New,
+                quantity = item.Quantity,
+                price = item.Price,
+                sale = item.Sale,
+                priceSale = item.Price_Sale,
+                evaluate = item.Evaluate,
+                imageProduct = imageURL(item.ImageProduct.ToList())
             });
             pagination.TotalCount = query.Count();
             var result = PageResult<DataResponse_Product>.ToPageResult(pagination, data);

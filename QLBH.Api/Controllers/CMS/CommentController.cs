@@ -28,26 +28,29 @@ namespace QLBH.Api.Controllers
         public async Task<IActionResult> Create([FromForm] DataRequest_CommentProduct comment
             , [FromForm] RequestFiles Files)
         {
-            comment.AccountID = Convert.ToInt64(HttpContext.User.FindFirst(Clames.ID).Value);
-            return Ok(await _commentServices.CreateAsync(comment, Files));
+            comment.accountID = Convert.ToInt64(HttpContext.User.FindFirst(Clames.ID).Value);
+            await _commentServices.CreateAsync(comment, Files);
+            return Ok();
         }
         [HttpPut("Upadte/{ID}")]
         public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_CommentProduct dataRequest_CommentProduct)
         {
-            return Ok(await _commentServices.Update(ID, dataRequest_CommentProduct));
+            await _commentServices.Update(ID, dataRequest_CommentProduct);
+            return Ok();
         }
         [HttpDelete("Delete/{ID}")]
         public async Task<IActionResult> Delete(long ID)
         {
-            return Ok(await _commentServices.Delete(ID));
+            await _commentServices.Delete(ID);
+            return Ok();
         }
         [HttpGet("GetAll")]
         public IActionResult GetAll([FromQuery] Request_Pagination request_Pagination, [FromQuery] string KeyWord = null)
         {
             return Ok(_commentServices.GetAll(new Pagination
             {
-                PageNumber = request_Pagination.PageNumber,
-                PageSize = request_Pagination.PageSize
+                PageNumber = request_Pagination.pageNumber,
+                PageSize = request_Pagination.pageSize
             }, KeyWord));
         }
         //image comment

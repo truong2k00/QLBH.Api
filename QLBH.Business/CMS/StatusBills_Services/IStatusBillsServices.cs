@@ -9,6 +9,6 @@ namespace QLBH.Business
 {
     public interface IStatusBillsServices : IReponsitory<DataRequest_StatusBill, long>
     {
-        Task<IEnumerable<DataResponse_StatusBill>> GetAll();
+        IEnumerable<DataResponse_StatusBill> GetAll();
     }
 }

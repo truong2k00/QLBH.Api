@@ -24,13 +24,13 @@ namespace QLBH.Business
             _invoiceServices = invoiceServices;
         }
 
-        public async Task<DataResponse_Bill> Create(DataRequest_Bill item)
+        public async Task Create(DataRequest_Bill item)
         {
             var entity = new Bill
             {
                 Status_BillID = 1,
-                AccountID = item.AccountID,
-                Address_ReceiveID = item.Address_ReceiveID,
+                AccountID = item.accountID,
+                Address_ReceiveID = item.addressReceiveID,
             };
             await _billRepository.CreateAsync(entity);
             if (item.invoiceDetail.Any())
@@ -40,29 +40,17 @@ namespace QLBH.Business
                 {
                     entity.Invoice_Details.Add(new Invoice_Details
                     {
-                        ProductID = data.ProductID,
-                        Quantity = data.Quantity,
-                        UnitPrice = data.UnitPrice,
-                        Price = data.Price,
+                        ProductID = data.productID,
+                        Quantity = data.quantity,
+                        UnitPrice = data.unitPrice,
+                        Price = data.price,
                     });
                 }
                 await _billRepository.UpdateAsync(entity);
             }
-            var bill = _billRepository.GetQueryable(record => record.ID == entity.ID);
-            var Data = bill.Select(item => new DataResponse_Bill
-            {
-                BillId = item.ID,
-                Date_Create = item.Date_Create,
-                Status_BillID = item.Status_BillID,
-                AccountID = item.AccountID,
-                TotalPrice = item.TotalPrice,
-                Address_ReceiveID = item.Address_ReceiveID,
-                InvoiceDetail = _invoiceServices.GetAll(item.ID).ToList(),
-            }).FirstOrDefault();
-            return Data;
         }
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
             try
             {
@@ -70,7 +58,6 @@ namespace QLBH.Business
                 await _invoiceServices.DeleteAsync(item.ID);
                 item.Deleted = true;
                 await _billRepository.UpdateAsync(item);
-                return true;
             }
             catch (Exception ex)
             {
@@ -82,13 +69,13 @@ namespace QLBH.Business
             var Data = await _billRepository.GetAsync(record => record.ID == ID);
             return new DataResponse_Bill
             {
-                BillId = Data.ID,
-                Date_Create = Data.Date_Create,
-                Status_BillID = Data.Status_BillID,
-                AccountID = Data.AccountID,
-                Address_ReceiveID = Data.Address_ReceiveID,
-                TotalPrice = Data.TotalPrice,
-                InvoiceDetail = _invoiceServices.GetAll(Data.ID).ToList()
+                billId = Data.ID,
+                date_Create = Data.Date_Create,
+                statusBillID = Data.Status_BillID,
+                accountID = Data.AccountID,
+                addressReceiveID = Data.Address_ReceiveID,
+                totalPrice = Data.TotalPrice,
+                invoiceDetail = _invoiceServices.GetAll(Data.ID).ToList()
             };
         }
         public IEnumerable<DataResponse_Bill> GetBillAsync()
@@ -108,18 +95,18 @@ namespace QLBH.Business
             }
             var result = query.Select(item => new DataResponse_Bill
             {
-                BillId = item.ID,
-                Date_Create = item.Date_Create,
-                Status_BillID = item.Status_BillID,
-                AccountID = item.AccountID,
-                Address_ReceiveID = item.Address_ReceiveID,
-                TotalPrice = item.TotalPrice,
-                InvoiceDetail = _invoiceServices.GetAll(item.ID)
+                billId = item.ID,
+                date_Create = item.Date_Create,
+                statusBillID = item.Status_BillID,
+                accountID = item.AccountID,
+                addressReceiveID = item.Address_ReceiveID,
+                totalPrice = item.TotalPrice,
+                invoiceDetail = _invoiceServices.GetAll(item.ID)
             }).AsEnumerable();
             return result;
         }
 
-        public async Task<DataResponse_Bill> Update(long ID)
+        public async Task Update(long ID)
         {
             var items = await _billRepository.GetAsync(record => record.ID == ID && record.Deleted == false && record.Status_BillID > 1);
             if (items != null)
@@ -128,33 +115,27 @@ namespace QLBH.Business
                 decimal totalPrice = 0;
                 foreach (var item in data)
                 {
-                    totalPrice += item.Price;
+                    totalPrice += item.price;
                 }
                 items.TotalPrice = totalPrice;
                 await _billRepository.UpdateAsync(items);
-                return new DataResponse_Bill
-                {
-                    BillId = items.ID,
-                    Date_Create = items.Date_Create,
-                    Status_BillID = items.Status_BillID,
-                    AccountID = items.AccountID,
-                    TotalPrice = items.TotalPrice,
-                    Address_ReceiveID = items.Address_ReceiveID,
-                    InvoiceDetail = _invoiceServices.GetAll(items.ID).ToList(),
-                };
             }
-            throw new Exception(Common_Constants.ErrorExists.EmptyList);
+            else { throw new Exception(Common_Constants.ErrorExists.EmptyList); }
         }
 
-        public async Task<DataResponse_Bill> DeleteInvoice(long invoiceId)
+        public async Task DeleteInvoice(long invoiceId)
         {
             var entity = await _invoiceServices.GetByID(invoiceId);
             var billId = entity.BillID;
-            if (await _invoiceServices.Delete(entity.ID))
+            try
             {
-                return await Update(billId);
+                await _invoiceServices.Delete(entity.ID);
+                await Update(billId);
             }
-            throw new Exception(Common_Constants.ErrorExists.EmptyList);
+            catch (Exception ex)
+            {
+                throw new Exception(Common_Constants.ErrorExists.EmptyList, ex);
+            }
         }
     }
 }

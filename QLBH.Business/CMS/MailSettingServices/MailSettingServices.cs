@@ -19,30 +19,30 @@ namespace QLBH.Business
             _MailSettingRepository = mailSettingRepository;
         }
 
-        public Task<DataResponse_MailSetting> Create(DataRequest_MailSetting data)
+        public Task Create(DataRequest_MailSetting data)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Delete(long ID)
+        public Task Delete(long ID)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<DataResponse_MailSetting>> GetAllMail()
+        public IEnumerable<DataResponse_MailSetting> GetAllMail()
         {
-            var Data = await _MailSettingRepository.GetAllAsync();
+            var Data = _MailSettingRepository.GetQueryable();
             return Data.Select(item => new DataResponse_MailSetting
             {
-                Code = item.Code,
-                TieuDe = item.TieuDe,
-                NoiDung = item.NoiDung,
-                Title = item.Title,
-                Description = item.Description,
+                code = item.Code,
+                tieuDe = item.TieuDe,
+                noiDung = item.NoiDung,
+                title = item.Title,
+                description = item.Description,
             });
         }
 
-        public Task<DataResponse_MailSetting> Update(long ID, DataRequest_MailSetting data)
+        public Task Update(long ID, DataRequest_MailSetting data)
         {
             throw new NotImplementedException();
         }

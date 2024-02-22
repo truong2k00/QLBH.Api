@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace QLBH.Business
 {
-    public interface IimageProducts<TEntity,Bind> : IReponsitory<Request_ImageProduct, long>
+    public interface IimageProducts<TEntity, Bind> : IReponsitory<Request_ImageProduct, long>
     {
-        Task<IEnumerable<TEntity>> GetAllAsync(Bind IDProduct);
-        Task<IEnumerable<TEntity>> GetAllAsync();
+        IEnumerable<TEntity> GetAllAsync(Bind IDProduct);
+        IEnumerable<TEntity> GetAllAsync();
         Task<TEntity> GetByIDAsync(Bind ID);
     }
 }

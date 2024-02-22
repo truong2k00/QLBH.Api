@@ -14,6 +14,7 @@ namespace QLBH.Api.Controllers
 {
     [Route(AppSettingKeys.DEFAULT_CONTROLER_RAUTER)]
     [ApiController]
+    //
     public class ProductController : ControllerBase
     {
         private readonly IProductServices<DataResponse_Product, int> _productServices;
@@ -30,40 +31,41 @@ namespace QLBH.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Create([FromForm] Request_Product product, [FromForm] RequestFiles files)
         {
-            var CreateAsync = await _productServices.Create(product, files);
-            return Ok(CreateAsync);
+            await _productServices.Create(product, files);
+            return Ok();
         }
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromQuery] long ID, [FromBody] Request_Product product, [FromForm] RequestFiles Files)
         {
-            return Ok(await _productServices.Update(ID, product, Files));
+            await _productServices.Update(ID, product, Files);
+            return Ok();
         }
         [HttpGet("GetAll-Product")]
-        public IActionResult GetAll([FromQuery] Request_Pagination pagination, [FromQuery] string KeyWord)
+        public IActionResult GetAll([FromQuery] Request_Pagination pagination, [FromQuery] string keyWord)
         {
             return Ok(_productServices.GetAll(new Pagination
             {
-                PageSize = pagination.PageSize,
-                PageNumber = pagination.PageNumber
-            }, KeyWord));
+                PageNumber = pagination.pageNumber,
+                PageSize = pagination.pageSize
+            }, keyWord));
         }
-        [HttpGet("GetAccountID/{AccountID}")]
-        public IActionResult GetByIDAccount(long AccountID, [FromQuery] Request_Pagination pagination, [FromQuery] string KeyWord)
+        [HttpGet("GetAccountID/{accountID}")]
+        public IActionResult GetByIDAccount(long accountID, [FromQuery] Request_Pagination pagination, [FromQuery] string keyWord)
         {
             return Ok(_productServices.GetByAccount(new Pagination
             {
-                PageSize = pagination.PageSize,
-                PageNumber = pagination.PageNumber
-            }, KeyWord, AccountID));
+                PageSize = pagination.pageSize,
+                PageNumber = pagination.pageNumber
+            }, keyWord, accountID));
         }
         [HttpGet("GetCategoryID/{CategoryID}")]
-        public IActionResult GetByIDCategory(long CategoryID, [FromQuery] Request_Pagination pagination, [FromQuery] string KeyWord)
+        public IActionResult GetByIDCategory(long CategoryID, [FromQuery] Request_Pagination pagination, [FromQuery] string keyWord)
         {
             return Ok(_productServices.GetByCategory(new Pagination
             {
-                PageSize = pagination.PageSize,
-                PageNumber = pagination.PageNumber
-            }, KeyWord, CategoryID));
+                PageSize = pagination.pageSize,
+                PageNumber = pagination.pageNumber
+            }, keyWord, CategoryID));
         }
         [HttpGet("GetAllSale")]
         public IActionResult GetAll()
@@ -79,23 +81,27 @@ namespace QLBH.Api.Controllers
         [HttpPost("Detail/Create")]
         public async Task<IActionResult> Create([FromQuery] DataRequest_DetailProduct dataRequest_)
         {
-            return Ok(await _detailProductservices.Create(dataRequest_));
+            await _detailProductservices.Create(dataRequest_);
+            return Ok();
         }
-        [HttpPut("Detail/Update/{ID}")]
-        public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_DetailProduct dataRequest_)
+        [HttpPut("Detail/Update/{iD}")]
+        public async Task<IActionResult> Update(long iD, [FromQuery] DataRequest_DetailProduct dataRequest_)
         {
-            return Ok(await _detailProductservices.Update(ID, dataRequest_));
+            await _detailProductservices.Update(iD, dataRequest_);
+            return Ok();
         }
-        [HttpDelete("Detail/Delete/{ID}")]
-        public async Task<IActionResult> Delete(long ID)
+        [HttpDelete("Detail/Delete/{iD}")]
+        public async Task<IActionResult> Delete(long iD)
         {
-            return Ok(await _detailProductservices.Delete(ID));
+            await _detailProductservices.Delete(iD);
+            return Ok();
         }
         //image product
         [HttpPost("Image/Create")]
         public async Task<IActionResult> Create([FromBody] Request_ImageProduct request_ImageProduct)
         {
-            return Ok(await _imageServices.Create(request_ImageProduct));
+            await _imageServices.Create(request_ImageProduct);
+            return Ok();
         }
         [HttpGet("Image/GetAll")]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Superuser)]

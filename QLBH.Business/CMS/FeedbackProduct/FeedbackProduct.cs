@@ -24,15 +24,15 @@ namespace QLBH.Business
 
         public async Task Create(Request_Feedback item)
         {
-            var product = await _baseRepositoryProduct.GetAsync(record => record.ID == item.IDProduct);
+            var product = await _baseRepositoryProduct.GetAsync(record => record.ID == item.productID);
             product.FeedBack = new List<FeedBack>
             {
                 new FeedBack
                 {
-                    AccountID = item.accountId,
-                    Opinion = item.Opinion,
-                    FeedBack_Quality=item.FeedBack_Quality,
-                    star = item.Star
+                    AccountID = item.accountID,
+                    Opinion = item.opinion,
+                    FeedBack_Quality=item.feedBackQuality,
+                    star = item.star
                 }
             };
             product.Evaluate = EvaluateStar(product.FeedBack.Select(x => (int)x.star).ToList());
@@ -62,11 +62,11 @@ namespace QLBH.Business
         public async Task Update(long ID, Request_Feedback item)
         {
             var entity = await _baseRepositoryFeedback.GetAsync(record => record.ID == ID);
-            if (entity.AccountID == item.accountId)
+            if (entity.AccountID == item.accountID)
             {
-                entity.FeedBack_Quality = item.FeedBack_Quality;
-                entity.star = item.Star;
-                entity.Opinion = item.Opinion;
+                entity.FeedBack_Quality = item.feedBackQuality;
+                entity.star = item.star;
+                entity.Opinion = item.opinion;
             }
             await _baseRepositoryFeedback.UpdateAsync(entity);
         }
@@ -84,9 +84,9 @@ namespace QLBH.Business
             }
             return query.Select(item => new Response_Feedback
             {
-                FeedBack_Quality = item.FeedBack_Quality,
-                Opinion = item.Opinion,
-                Star = item.star,
+                feedBack_Quality = item.FeedBack_Quality,
+                opinion = item.Opinion,
+                star = item.star,
             });
         }
     }

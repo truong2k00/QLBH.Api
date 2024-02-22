@@ -10,6 +10,6 @@ namespace QLBH.Business.CMS
 {
     public interface IProductCategoryServices : IReponsitory<DataRequest_ProductCategory, long>
     {
-        Task<IEnumerable<DataResponse_ProductCategory>> GetAll();
+        IEnumerable<DataResponse_ProductCategory> GetAll();
     }
 }

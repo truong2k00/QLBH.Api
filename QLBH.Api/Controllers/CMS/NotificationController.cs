@@ -19,31 +19,34 @@ namespace QLBH.Api.Controllers
             _services = services;
         }
         [HttpGet("GetAll")]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
-            return Ok(await _services.GetAll());
+            return Ok(_services.GetAll());
         }
         [HttpGet("GetAccountID")]
         [Authorize]
-        public async Task<IActionResult> GetByAccount()
+        public IActionResult GetByAccount()
         {
-            return Ok(await _services.GetByAccount(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value)));
+            return Ok(_services.GetAll(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value)));
         }
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromQuery] DataRequest_Notification notification)
         {
-            return Ok(await _services.Create(notification));
+            await _services.Create(notification);
+            return Ok();
         }
         [HttpDelete("Delete/{ID}")]
         public async Task<IActionResult> Delete(long ID)
         {
-            return Ok(await _services.Delete(ID));
+            await _services.Delete(ID);
+            return Ok();
         }
         [HttpPut("Update/{ID}")]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Editor)]
         public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_Notification notification)
         {
-            return Ok(await _services.Update(ID, notification));
+            await _services.Update(ID, notification);
+            return Ok();
         }
         [HttpPut("watched/{ID}")]
         public async Task<IActionResult> Watched(long ID)

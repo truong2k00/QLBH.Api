@@ -9,7 +9,7 @@ namespace QLBH.Models
     public class DataRespon_CommentProduct
     {
         public string user { get; set; }
-        public string comment { get; set; }
+        public string opinion { get; set; }
         public DateTime datecreate { get; set; }
     }
 }

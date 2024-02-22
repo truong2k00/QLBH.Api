@@ -26,60 +26,46 @@ namespace QLBH.Business
             _handleUpload = handleUpload;
         }
 
-        public async Task<DataResponse_TypeProduct> Create(DataRequest_TypeProduct data)
+        public async Task Create(DataRequest_TypeProduct data)
         {
             var Entity = new Type_Product
             {
-                Type_Name = data.Type_Name,
-                ProductID = data.ProductID,
-                Image = await _handleUpload.UploadImage(_contextAccessor.HttpContext.User.FindFirst(Clames.USER).Value, data.Image)
+                Type_Name = data.type_Name,
+                ProductID = data.productID,
+                Image = await _handleUpload.UploadImage(_contextAccessor.HttpContext.User.FindFirst(Clames.USER).Value, data.image)
             };
             await _repository.CreateAsync(Entity);
-            return new DataResponse_TypeProduct
-            {
-                ID = Entity.ID,
-                Image = Entity.Image,
-                ProductID = Entity.ProductID,
-                Type_Name = Entity.Type_Name,
-            };
         }
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
-            return await _repository.DeleteAsync(ID);
+            await _repository.DeleteAsync(ID);
         }
 
-        public async Task<IEnumerable<DataResponse_TypeProduct>> GetAll()
+        public IEnumerable<DataResponse_TypeProduct> GetAll()
         {
-            var Data = await _repository.GetAllAsync();
-            return Data.Select(item => new DataResponse_TypeProduct
-            {
-                ID = item.ID,
-                Image = item.Image,
-                ProductID = item.ProductID,
-                Type_Name = item.Type_Name,
-            });
+            return GetAll(0);
         }
 
-        public async Task<IEnumerable<DataResponse_TypeProduct>> GetByIDProduct(long IDProduct)
+        public IEnumerable<DataResponse_TypeProduct> GetAll(long productId = 0)
         {
-            var Data = await _repository.GetAllAsync(record => record.ProductID == IDProduct);
-            return Data.Select(item => new DataResponse_TypeProduct
+            var query = _repository.GetQueryable();
+            if (productId != 0)
             {
-                ID = item.ID,
-                Image = item.Image,
-                ProductID = item.ProductID,
-                Type_Name = item.Type_Name,
-            });
-        }
-
-        public async Task<DataResponse_TypeProduct> Update(long ID, DataRequest_TypeProduct data)
-        {
-            if (await Delete(ID))
-            {
-                return await Create(data);
+                query = query.Where(record => record.ProductID == productId);
             }
-            return null;
+            return query.Select(item => new DataResponse_TypeProduct
+            {
+                iD = item.ID,
+                image = item.Image,
+                productID = item.ProductID,
+                typeName = item.Type_Name,
+            });
+        }
+
+        public async Task Update(long ID, DataRequest_TypeProduct data)
+        {
+            await Create(data);
         }
     }
 }

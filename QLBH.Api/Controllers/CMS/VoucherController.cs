@@ -21,13 +21,13 @@ namespace QLBH.Api.Controllers.CMS
         [HttpGet("GetAll")]
         public IActionResult Get()
         {
-            return Ok(_services.GetVouchers());
+            return Ok(_services.GetAll());
         }
         [HttpGet("GetByIDAccount")]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Manager)]
         public IActionResult GetByAccount()
         {
-            return Ok(_services.GetByIDAccount(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value)));
+            return Ok(_services.GetAll(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value)));
         }
         [HttpGet("GetByID/{ID}")]
         [Authorize]
@@ -39,21 +39,24 @@ namespace QLBH.Api.Controllers.CMS
         [Authorize(RoleKeyString.Manager, RoleKeyString.Editor, RoleKeyString.Moderator)]
         public async Task<IActionResult> Create([FromQuery] DataRequest_Voucher dataRequest_)
         {
-            dataRequest_.AccountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
-            return Ok(await _services.Create(dataRequest_));
+            dataRequest_.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
+            await _services.Create(dataRequest_);
+            return Ok();
         }
         [HttpPut("Update/{ID}")]
         [Authorize(RoleKeyString.Manager, RoleKeyString.Editor)]
         public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_Voucher dataRequest_)
         {
-            dataRequest_.AccountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
-            return Ok(await _services.Update(ID, dataRequest_));
+            dataRequest_.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
+            await _services.Update(ID, dataRequest_);
+            return Ok();
         }
         [HttpDelete("Delete/{ID}")]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Manager, RoleKeyString.Editor)]
         public async Task<IActionResult> Delete(long ID)
         {
-            return Ok(await _services.Delete(ID));
+            await _services.Delete(ID);
+            return Ok();
         }
     }
 }

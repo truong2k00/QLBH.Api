@@ -9,8 +9,8 @@ namespace QLBH.Business
 {
     public interface IVoucherServices : IReponsitory<DataRequest_Voucher, long>
     {
-        IEnumerable<DataResponse_Voucher> GetVouchers();
-        IEnumerable<DataResponse_Voucher> GetByIDAccount(long AccountID);
+        IEnumerable<DataResponse_Voucher> GetAll();
+        IEnumerable<DataResponse_Voucher> GetAll(long accountID);
         Task<DataResponse_Voucher> GetByID(long ID);
     }
 }

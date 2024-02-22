@@ -9,7 +9,7 @@ namespace QLBH.Business
     public interface IReponsitory<TEntity, Bind>
     {
         Task Create(TEntity data);
-        Task Update(Bind ID,TEntity data);
-        Task Delete(Bind ID);
+        Task Update(Bind iD,TEntity data);
+        Task Delete(Bind iD);
     }
 }

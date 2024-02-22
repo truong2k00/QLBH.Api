@@ -9,7 +9,7 @@ namespace QLBH.Business
 {
     public interface IRoleServices : IReponsitory<DataRequest_Role, long>
     {
-        Task<DataResponse_Role> UpdateAsync(DataRequest_Role data);
-        Task<List<DataResponse_Role>> GetAll();
+        Task UpdateAsync(DataRequest_Role data);
+        List<DataResponse_Role> GetAll();
     }
 }

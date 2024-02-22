@@ -10,7 +10,7 @@ namespace QLBH.Business
 {
     public interface ITypeProductServices : IReponsitory<DataRequest_TypeProduct, long>
     {
-        Task<IEnumerable<DataResponse_TypeProduct>> GetAll();
-        Task<IEnumerable<DataResponse_TypeProduct>> GetByIDProduct(long IDProduct);
+        IEnumerable<DataResponse_TypeProduct> GetAll();
+        IEnumerable<DataResponse_TypeProduct> GetAll(long productID=0);
     }
 }

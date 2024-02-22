@@ -18,29 +18,32 @@ namespace QLBH.Api.Controllers
             _services = services;
         }
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+        public IActionResult GetAll()
         {
-            return Ok(await _services.GetAll());
+            return Ok(_services.GetAll());
         }
         [HttpGet("GetAll/{IDproduct}")]
-        public async Task<IActionResult> GetAll(long IDproduct)
+        public IActionResult GetAll(long IDproduct)
         {
-            return Ok(await _services.GetByIDProduct(IDproduct));
+            return Ok(_services.GetAll(IDproduct));
         }
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromQuery] DataRequest_TypeProduct dataRequest_)
         {
-            return Ok(await _services.Create(dataRequest_));
+            await _services.Create(dataRequest_);
+            return Ok();
         }
         [HttpPut("Update/{ID}")]
         public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_TypeProduct dataRequest_)
         {
-            return Ok(await _services.Update(ID, dataRequest_));
+            await _services.Update(ID, dataRequest_);
+            return Ok();
         }
-        [HttpDelete("Delete/{ID}")]
-        public async Task<IActionResult> Delete(long ID)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(long id)
         {
-            return Ok(await _services.Delete(ID));
+            await _services.Delete(id);
+            return Ok();
         }
     }
 }

@@ -24,54 +24,49 @@ namespace QLBH.Business
             _accountRepository = accountRepository;
         }
 
-        public async Task<DataResponse_Decenlization> Create(DataRequest_Decenlization data)
+        public async Task Create(DataRequest_Decenlization data)
         {
             Role role = await _roleRepository.GetAsync(record => record.Role_ID == Convert.ToInt64(data.role));
             var entity = new Decentralization
             {
-                AccountID = data.AccountID,
+                AccountID = data.accountID,
                 role = data.role,
                 RoleID = role.ID
             };
             await _decentralizationRepository.CreateAsync(entity);
             var RoleNames = _decentralizationRepository.GetQueryable(record => record.AccountID == entity.AccountID)
                             .Select(record => record.Role.Role_Name).ToList();
-            return new DataResponse_Decenlization
-            {
-                AccountID = entity.AccountID,
-                Roles = RoleNames
-            };
         }
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
-            return await _decentralizationRepository.DeleteAsync(ID);
+            await _decentralizationRepository.DeleteAsync(ID);
         }
 
         public IEnumerable<DataResponse_Decenlization> GetAllRole()
         {
             var Query = _accountRepository.GetQueryable();
-            return Query.Select(item=> new DataResponse_Decenlization
+            return Query.Select(item => new DataResponse_Decenlization
             {
-                AccountID = item.ID,
-                User = item.User_Name,
-                Roles = item.Decentralizations.Select(item=>item.Role.Role_Name).ToList()
+                accountID = item.ID,
+                user = item.User_Name,
+                roles = item.Decentralizations.Select(item => item.Role.Role_Name).ToList()
             }).AsEnumerable();
         }
 
         public DataResponse_Decenlization GetAllRole(long accountId)
         {
-            var Query = _accountRepository.GetQueryable(record=>record.ID == accountId);
+            var Query = _accountRepository.GetQueryable(record => record.ID == accountId);
             var Data = Query.Select(item => new DataResponse_Decenlization
             {
-                AccountID = item.ID,
-                User = item.User_Name,
-                Roles = item.Decentralizations.Select(item => item.Role.Role_Name).ToList()
+                accountID = item.ID,
+                user = item.User_Name,
+                roles = item.Decentralizations.Select(item => item.Role.Role_Name).ToList()
             }).FirstOrDefault();
             return Data;
         }
 
-        public async Task<DataResponse_Decenlization> Update(long ID, DataRequest_Decenlization data)
+        public async Task Update(long ID, DataRequest_Decenlization data)
         {
             var item = await _decentralizationRepository.GetAsync(record => record.ID == ID);
             item.RoleID = Convert.ToInt64(data.role);
@@ -79,11 +74,6 @@ namespace QLBH.Business
             await Delete(ID);
             var RoleNames = _decentralizationRepository.GetQueryable(record => record.AccountID == item.AccountID)
                             .Select(record => record.Role.Role_Name).ToList();
-            return new DataResponse_Decenlization
-            {
-                AccountID = item.AccountID,
-                Roles = RoleNames
-            };
 
         }
     }

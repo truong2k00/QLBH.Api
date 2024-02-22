@@ -9,6 +9,6 @@ namespace QLBH.Business
 {
     public interface IMailSettingServices : IReponsitory<DataRequest_MailSetting, long>
     {
-        Task<IEnumerable<DataResponse_MailSetting>> GetAllMail();
+        IEnumerable<DataResponse_MailSetting> GetAllMail();
     }
 }

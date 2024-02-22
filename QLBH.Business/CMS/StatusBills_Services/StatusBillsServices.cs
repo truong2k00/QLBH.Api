@@ -18,53 +18,42 @@ namespace QLBH.Business
             _repository = repository;
         }
 
-        public async Task<DataResponse_StatusBill> Create(DataRequest_StatusBill data)
+        public async Task Create(DataRequest_StatusBill data)
         {
             var Entity = new Status_Bill
             {
-                Status_Name = data.Status_Name,
+                Status_Name = data.status_Name,
                 Deleted = false
             };
             await _repository.CreateAsync(Entity);
-            return new DataResponse_StatusBill
-            {
-                Status_Name = Entity.Status_Name,
-                StatusBillId = Entity.ID
-            };
         }
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
             try
             {
                 var Item = await _repository.GetByIDAsync(ID);
                 Item.Deleted = true;
                 await _repository.UpdateAsync(Item);
-                return true;
             }
             catch
             {
-                return false;
             }
         }
 
-        public async Task<IEnumerable<DataResponse_StatusBill>> GetAll()
+        public IEnumerable<DataResponse_StatusBill> GetAll()
         {
-            var Datas = await _repository.GetAllAsync();
-            return Datas.Select(item => new DataResponse_StatusBill
+            var query = _repository.GetQueryable();
+            return query.Select(item => new DataResponse_StatusBill
             {
-                Status_Name = item.Status_Name,
-                StatusBillId = item.ID
+                status_Name = item.Status_Name,
+                statusBillId = item.ID
             });
         }
 
-        public async Task<DataResponse_StatusBill> Update(long ID, DataRequest_StatusBill data)
+        public async Task Update(long ID, DataRequest_StatusBill data)
         {
-            if (await Delete(ID))
-            {
-                return await Create(data);
-            }
-            else return null;
+            await Create(data);
         }
     }
 }

@@ -17,23 +17,23 @@ namespace QLBH.Business
             _roleRepository = roleRepository;
         }
 
-        public Task<DataResponse_Role> Create(DataRequest_Role data)
+        public Task Create(DataRequest_Role data)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Delete(long ID)
+        public Task Delete(long ID)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<List<DataResponse_Role>> GetAll()
+        public List<DataResponse_Role> GetAll()
         {
-            var Entities = await _roleRepository.GetAllAsync();
-            return Entities.Select(record => new DataResponse_Role
+            var query = _roleRepository.GetQueryable();
+            return query.Select(record => new DataResponse_Role
             {
-                Role_ID = record.ID,
-                Role_Name = record.Role_Name
+                roleID = record.ID,
+                roleName = record.Role_Name
             }).ToList();
         }
 
@@ -42,16 +42,16 @@ namespace QLBH.Business
             throw new NotImplementedException();
         }
 
-        public async Task<DataResponse_Role> UpdateAsync(DataRequest_Role data)
+        public async Task UpdateAsync(DataRequest_Role data)
         {
-            Role entity = await _roleRepository.GetByIDAsync(data.ID);
-            entity.Role_Name = data.RoleName;
+            Role entity = await _roleRepository.GetByIDAsync(data.iD);
+            entity.Role_Name = data.roleName;
             await _roleRepository.UpdateAsync(entity);
-            return new DataResponse_Role
-            {
-                Role_ID = entity.Role_ID,
-                Role_Name = entity.Role_Name
-            };
+        }
+
+        Task IReponsitory<DataRequest_Role, long>.Update(long iD, DataRequest_Role data)
+        {
+            throw new NotImplementedException();
         }
     }
 }

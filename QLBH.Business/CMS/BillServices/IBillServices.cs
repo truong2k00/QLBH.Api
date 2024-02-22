@@ -10,10 +10,10 @@ namespace QLBH.Business
 {
     public interface IBillServices
     {
-        Task<DataResponse_Bill> Create(DataRequest_Bill item);
-        Task<bool> Delete(long ID);
-        Task<DataResponse_Bill> DeleteInvoice(long invoiceId);
-        Task<DataResponse_Bill> Update(long ID);
+        Task Create(DataRequest_Bill item);
+        Task Delete(long ID);
+        Task DeleteInvoice(long invoiceId);
+        Task Update(long ID);
         IEnumerable<DataResponse_Bill> GetBillAsync();
         IEnumerable<DataResponse_Bill> GetBillAsync(long accountId = 0, bool IsDelete = false);
         IEnumerable<DataResponse_Bill> GetBillAsync(bool IsDelete = true);

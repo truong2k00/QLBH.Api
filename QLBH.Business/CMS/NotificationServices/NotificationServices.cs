@@ -18,59 +18,48 @@ namespace QLBH.Business
             _notificationRepository = notificationRepository;
         }
 
-        public async Task<DataResponse_Notification> Create(DataRequest_Notification data)
+        public async Task Create(DataRequest_Notification data)
         {
             var Entity = new Notification
             {
-                Notification_Title = data.Notification_Title,
-                Notification_Description = data.Notification_Description,
+                Notification_Title = data.notificationTitle,
+                Notification_Description = data.notificationDescription,
                 watched_at = false,
-                AccountID = data.AccountID,
+                AccountID = data.accountID,
             };
             await _notificationRepository.CreateAsync(Entity);
-            return new DataResponse_Notification
-            {
-                NotificationId = Entity.ID,
-                Notification_Title = Entity.Notification_Title,
-                Notification_Description = Entity.Notification_Description,
-                watched_at = Entity.watched_at,
-                AccountID = Entity.AccountID,
-            };
         }
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
-            return await _notificationRepository.DeleteAsync(ID);
+            await _notificationRepository.DeleteAsync(ID);
         }
 
-        public async Task<IEnumerable<DataResponse_Notification>> GetAll()
+        public IEnumerable<DataResponse_Notification> GetAll()
         {
-            var Data = await _notificationRepository.GetAllAsync();
-            return Data.Select(item => new DataResponse_Notification
+            return GetAll(0);
+        }
+
+        public IEnumerable<DataResponse_Notification> GetAll(long accountID)
+        {
+
+            var query = _notificationRepository.GetQueryable();
+            if (accountID > 0)
             {
-                Notification_Title = item.Notification_Title,
-                Notification_Description = item.Notification_Description,
+                query = query.Where(record => record.AccountID == accountID);
+            }
+            return query.Select(item => new DataResponse_Notification
+            {
+                notificationTitle = item.Notification_Title,
+                notificationDescription = item.Notification_Description,
                 watched_at = item.watched_at,
-                AccountID = item.AccountID,
+                accountID = item.AccountID,
             });
         }
 
-        public async Task<IEnumerable<DataResponse_Notification>> GetByAccount(long AccountID)
-        {
-            var Data = await _notificationRepository.GetAllAsync(record => record.AccountID == AccountID);
-            return Data.Select(item => new DataResponse_Notification
-            {
-                Notification_Title = item.Notification_Title,
-                Notification_Description = item.Notification_Description,
-                watched_at = item.watched_at,
-                AccountID = item.AccountID,
-            });
-        }
-
-        public async Task<DataResponse_Notification> Update(long ID, DataRequest_Notification data)
+        public async Task Update(long ID, DataRequest_Notification data)
         {
             await Delete(ID);
-            return await Create(data);
         }
 
         public async Task<DataResponse_Notification> Watched(long id)
@@ -80,10 +69,10 @@ namespace QLBH.Business
             await _notificationRepository.UpdateAsync(Data);
             return new DataResponse_Notification
             {
-                Notification_Title = Data.Notification_Title,
-                Notification_Description = Data.Notification_Description,
+                notificationTitle = Data.Notification_Title,
+                notificationDescription = Data.Notification_Description,
                 watched_at = Data.watched_at,
-                AccountID = Data.AccountID,
+                accountID = Data.AccountID,
             };
         }
     }

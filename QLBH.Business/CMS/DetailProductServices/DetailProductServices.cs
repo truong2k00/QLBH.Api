@@ -13,64 +13,52 @@ namespace QLBH.Business
 {
     public class DetailProductServices : IDetailProductServices
     {
-        private readonly IBaseRepository<Details> _DetailRepository;
+        private readonly IBaseRepository<Details> _detailRepository;
         private readonly IBaseRepository<Product> _productRepository;
 
         public DetailProductServices(IBaseRepository<Details> detailRepository
             , IBaseRepository<Product> productRepository)
         {
             _productRepository = productRepository;
-            _DetailRepository = detailRepository;
+            _detailRepository = detailRepository;
         }
 
-        public Task<DataResponse_DetailProduct> Create(DataRequest_DetailProduct data)
+        public Task Create(DataRequest_DetailProduct data)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<DataResponse_DetailProduct> CreateAsync(long accountId, DataRequest_DetailProduct data)
+        public async Task CreateAsync(long accountId, DataRequest_DetailProduct data)
         {
-            var query = _productRepository.GetQueryable(record => record.AccountID == accountId && record.ID == data.ProductID);
+            var query = _productRepository.GetQueryable(record => record.AccountID == accountId && record.ID == data.productID);
             if (!query.Any())
             {
                 throw new NotImplementedException(Common_Constants.ErrorExists.EmptyList);
             }
-            if (_DetailRepository.GetQueryable(record => record.ProductID == data.ProductID).Any())
+            if (_detailRepository.GetQueryable(record => record.ProductID == data.productID).Any())
             {
                 throw new NotImplementedException(Common_Constants.ErrorExists.AlreadyExist);
             }
             var item = new Details
             {
-                Detail_Introduce = data.Introduce,
-                Introduce = data.Introduce,
-                ProductID = data.ProductID,
+                Detail_Introduce = data.detail_Introduce,
+                Introduce = data.introduce,
+                ProductID = data.productID,
             };
-            await _DetailRepository.CreateAsync(item);
-            return new DataResponse_DetailProduct
-            {
-                Detail_Introduce = item.Detail_Introduce,
-                Introduce = item.Introduce,
-                ProductID = item.ProductID
-            };
+            await _detailRepository.CreateAsync(item);
         }
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long iD)
         {
-            return await _DetailRepository.DeleteAsync(ID);
+            await _detailRepository.DeleteAsync(iD);
         }
 
-        public async Task<DataResponse_DetailProduct> Update(long accountId, DataRequest_DetailProduct data)
+        public async Task Update(long accountId, DataRequest_DetailProduct data)
         {
-            var item = await _DetailRepository.GetAsync(record => record.ProductID == data.ProductID);
-            item.Detail_Introduce = data.Detail_Introduce;
-            item.Introduce = data.Introduce;
-            await _DetailRepository.UpdateAsync(item);
-            return new DataResponse_DetailProduct
-            {
-                Detail_Introduce = item.Detail_Introduce,
-                Introduce = item.Introduce,
-                ProductID = item.ProductID
-            };
+            var item = await _detailRepository.GetAsync(record => record.ProductID == data.productID);
+            item.Detail_Introduce = data.detail_Introduce;
+            item.Introduce = data.introduce;
+            await _detailRepository.UpdateAsync(item);
         }
     }
 }

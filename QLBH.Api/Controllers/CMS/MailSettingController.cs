@@ -21,14 +21,15 @@ namespace QLBH.Api.Controllers
 
         [HttpGet("GetAll")]
         [Authorize(RoleKeyString.Admin)]
-        public async Task<IActionResult> GetAll()
+        public IActionResult GetAll()
         {
-            return Ok(await _mailSettingServices.GetAllMail());
+            return Ok(_mailSettingServices.GetAllMail());
         }
         [HttpPut("Update/{ID}")]
         public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_MailSetting mailSetting)
         {
-            return Ok(await _mailSettingServices.Update(ID, mailSetting));
+            await _mailSettingServices.Update(ID, mailSetting);
+            return Ok();
         }
     }
 }

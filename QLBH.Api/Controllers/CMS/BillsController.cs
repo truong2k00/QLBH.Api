@@ -64,29 +64,33 @@ namespace QLBH.Api.Controllers
         [Authorize(RoleKeyString.User, RoleKeyString.Guest, RoleKeyString.Superuser, RoleKeyString.Guest)]
         public async Task<IActionResult> Create([FromQuery] DataRequest_Bill data)
         {
-            data.AccountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
-            return Ok(await _billServices.Create(data));
+            data.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
+            await _billServices.Create(data);
+            return Ok();
         }
 
 
         [HttpPut("Update/{ID}")]
         public async Task<IActionResult> Update(long ID)
         {
-            return Ok(await _billServices.Update(ID));
+            await _billServices.Update(ID);
+            return Ok();
         }
 
 
         [HttpDelete("Delete/{ID}")]
         public async Task<IActionResult> Delete(long ID)
         {
-            return Ok(await _billServices.Delete(ID));
+            await _billServices.Delete(ID);
+            return Ok();
         }
 
 
         [HttpDelete("InvoiceDelete/{invoiceId}")]
         public async Task<IActionResult> DeleteInvoice(long invoiceId)
         {
-            return Ok(await _billServices.DeleteInvoice(invoiceId));
+            await _billServices.DeleteInvoice(invoiceId);
+            return Ok();
         }
 
 
@@ -95,7 +99,8 @@ namespace QLBH.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_InvoidDetails dataRequest_)
         {
-            return Ok(await _invoiceServices.Update(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), ID, dataRequest_));
+            await _invoiceServices.Update(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), ID, dataRequest_);
+            return Ok();
         }
 
 
@@ -103,7 +108,8 @@ namespace QLBH.Api.Controllers
         [Authorize(RoleKeyString.Admin, RoleKeyString.Manager)]
         public async Task<IActionResult> UpdateAsync(long ID, [FromQuery] DataRequest_InvoidDetails dataRequest_)
         {
-            return Ok(await _invoiceServices.Update(0, ID, dataRequest_));
+            await _invoiceServices.Update(0, ID, dataRequest_);
+            return Ok();
         }
     }
 }

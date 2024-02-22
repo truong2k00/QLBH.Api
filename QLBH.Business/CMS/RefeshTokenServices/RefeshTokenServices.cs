@@ -22,10 +22,10 @@ namespace QLBH.Business
             var Datas = await _repository.GetAllAsync(record => record.AccountID == AccountID);
             return Datas.Select(item => new DataResponse_RefeshToken
             {
-                RefeshTokenID = item.ID,
-                AccountID = AccountID,
-                Token = item.Token,
-                Date_Expired = item.Date_Expired,
+                refeshTokenID = item.ID,
+                accountID = AccountID,
+                token = item.Token,
+                dateExpired = item.Date_Expired,
             });
         }
         public async Task<IEnumerable<DataResponse_RefeshToken>> GetAll()
@@ -33,10 +33,10 @@ namespace QLBH.Business
             var Datas = await _repository.GetAllAsync();
             return Datas.Select(item => new DataResponse_RefeshToken
             {
-                RefeshTokenID = item.ID,
-                AccountID = item.AccountID,
-                Token = item.Token,
-                Date_Expired = item.Date_Expired,
+                refeshTokenID = item.ID,
+                accountID = item.AccountID,
+                token = item.Token,
+                dateExpired = item.Date_Expired,
             });
         }
     }

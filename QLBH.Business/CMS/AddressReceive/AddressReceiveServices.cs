@@ -28,66 +28,46 @@ namespace QLBH.Business
             _baseRepositoryAddress = baseRepositoryAddress;
         }
         //create Address receive
-        public async Task<Respon_AddressReceive> Create(Request_AddressReceive item)
+        public async Task Create(Request_AddressReceive item)
         {
             Address_Receive address = new Address_Receive
             {
-                AccountID = item.AccountID,
-                Address = item.Address,
-                Phone = item.Phone,
-                Full_Name = item.Full_Name,
-                Describe = item.Describe,
-                Email = item.Email,
+                AccountID = item.accountID,
+                Address = item.address,
+                Phone = item.phone,
+                Full_Name = item.full_Name,
+                Describe = item.describe,
+                Email = item.email,
             };
             MailSetting mailsetting = await _baseRepositoryMailSetting.GetAsync(x => x.Code == EmailCode.XacThucEmail);
-            address.ConfirmEmail = MailSeeding.NewConfirmEmail(mailsetting, item.AccountID);
+            address.ConfirmEmail = MailSeeding.NewConfirmEmail(mailsetting, item.accountID);
             await _baseRepositoryAddress.CreateAsync(address);
             await SenderEmail(mailsetting, address);
-            return new Respon_AddressReceive
-            {
-                AddressID = address.ID,
-                Address = address.Address,
-                Phone = address.Phone,
-                Full_Name = address.Full_Name,
-                Describe = address.Describe,
-                Email = address.Email
-            };
         }
 
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long ID)
         {
             try
             {
                 var entity = await _baseRepositoryAddress.GetAsync(record => record.ID == ID);
                 entity.Deleted = true;
                 await _baseRepositoryAddress.UpdateAsync(entity);
-                return true;
             }
             catch
             {
-                return false;
             }
         }
 
-        public async Task<Respon_AddressReceive> Update(long ID, Request_AddressReceive item)
+        public async Task Update(long ID, Request_AddressReceive item)
         {
             var Entity = await _baseRepositoryAddress.GetAsync(record => record.ID == ID);
-            Entity.Address = item.Address;
-            Entity.Phone = item.Phone;
-            Entity.Full_Name = item.Full_Name;
-            Entity.Describe = item.Describe;
-            Entity.Email = item.Email;
+            Entity.Address = item.address;
+            Entity.Phone = item.phone;
+            Entity.Full_Name = item.full_Name;
+            Entity.Describe = item.describe;
+            Entity.Email = item.email;
             await _baseRepositoryAddress.UpdateAsync(Entity);
-            return new Respon_AddressReceive
-            {
-                AddressID = Entity.ID,
-                Address = Entity.Address,
-                Phone = Entity.Phone,
-                Full_Name = Entity.Full_Name,
-                Describe = Entity.Describe,
-                Email = Entity.Email
-            };
         }
 
         public PageResult<Respon_AddressReceive> GetAll(Pagination pagination, string KeyWord)
@@ -111,12 +91,12 @@ namespace QLBH.Business
             }
             var Data = query.Select(record => new Respon_AddressReceive
             {
-                AddressID = record.ID,
-                Address = record.Address,
-                Phone = record.Phone,
-                Full_Name = record.Full_Name,
-                Describe = record.Describe,
-                Email = record.Email
+                addressID = record.ID,
+                address = record.Address,
+                phone = record.Phone,
+                full_Name = record.Full_Name,
+                describe = record.Describe,
+                email = record.Email
             });
             pagination.TotalCount = Data.Count();
             var result = PageResult<Respon_AddressReceive>.ToPageResult(pagination, Data);
@@ -128,12 +108,12 @@ namespace QLBH.Business
             var Data = await _baseRepositoryAddress.GetByIDAsync(AddressID);
             return new Respon_AddressReceive
             {
-                AddressID = Data.ID,
-                Address = Data.Address,
-                Phone = Data.Phone,
-                Full_Name = Data.Full_Name,
-                Describe = Data.Describe,
-                Email = Data.Email
+                addressID = Data.ID,
+                address = Data.Address,
+                phone = Data.Phone,
+                full_Name = Data.Full_Name,
+                describe = Data.Describe,
+                email = Data.Email
             };
         }
         public string Code(string code)

@@ -44,9 +44,9 @@ namespace QLBH.Business
             var data = await _imageRepository.GetByIDAsync(id);
             return new DataRespon_ImageComment
             {
-                ImageCommentID = data.ID,
+                imageCommentID = data.ID,
                 href = data.href,
-                Comment_ProductID = data.Comment_ProductID,
+                commentProductID = data.Comment_ProductID,
             };
         }
 
@@ -61,12 +61,12 @@ namespace QLBH.Business
                     await _imageRepository.DeleteAsync(item.ID);
                 }
             }
-            await Create(UserName, ID, files.Files);
+            await Create(UserName, ID, files.files);
             var data = await _imageRepository.GetAllAsync(record => record.Comment_ProductID == ID);
             return data.Select(item => new DataRespon_ImageComment
             {
-                ImageCommentID = item.ID,
-                Comment_ProductID = item.Comment_ProductID,
+                imageCommentID = item.ID,
+                commentProductID = item.Comment_ProductID,
                 href = item.href
             });
         }

@@ -15,11 +15,11 @@ namespace QLBH.Business
 
         public async Task Create(DataRequest_Cart data)
         {
-            if (!_cartRepository.GetQueryable(record => record.AccountID == data.AccountID).Any())
+            if (!_cartRepository.GetQueryable(record => record.AccountID == data.accountID).Any())
             {
                 var entity = new Cart
                 {
-                    AccountID = data.AccountID
+                    AccountID = data.accountID
                 };
                 await _cartRepository.CreateAsync(entity);
             }

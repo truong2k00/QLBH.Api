@@ -55,9 +55,9 @@ namespace QLBH.Api.Controllers
         }
         [HttpPost("Details/addCart")]
         [Authorize]
-        public async Task<IActionResult> AddCard()
+        public IActionResult AddCard()
         {
-            return Ok(await _detailCartServices.AddCart(dataRequest_DetailCart));
+            return Ok();
         }
         [HttpPut("Details/Update/{ID}")]
         public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_DetailCart dataRequest_DetailCart)

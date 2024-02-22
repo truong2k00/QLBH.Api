@@ -8,6 +8,6 @@ namespace QLBH.Models
 {
     public class Respon_AddressReceive : Request_AddressReceive
     {
-        public long AddressID { get; set; }
+        public long addressID { get; set; }
     }
 }

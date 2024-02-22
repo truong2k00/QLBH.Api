@@ -16,7 +16,6 @@ namespace QLBH.Models.Entities
         public bool Is_New { get; set; }
         public bool Sale { get; set; }
         public DateTime? Date_Delete { get; set; }
-        public bool Is_Deleted { get; set; }
         public long Quantity { get; set; }
         public long Price { get; set; }
         public long Price_Sale { get; set; }

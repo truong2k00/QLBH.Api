@@ -8,11 +8,11 @@ namespace QLBH.Models
 {
     public class Request_AddressReceive
     {
-        public long AccountID { get; set; }
-        public string Address { get; set; }
-        public string Phone { get; set; }
-        public string Full_Name { get; set; }
-        public string Describe { get; set; }
-        public string Email { get; set; }
+        public long accountID { get; set; }
+        public string address { get; set; }
+        public string phone { get; set; }
+        public string fullName { get; set; }
+        public string describe { get; set; }
+        public string email { get; set; }
     }
 }

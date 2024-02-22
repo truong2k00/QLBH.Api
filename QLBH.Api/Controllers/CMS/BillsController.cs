@@ -64,7 +64,7 @@ namespace QLBH.Api.Controllers
         [Authorize(RoleKeyString.User, RoleKeyString.Guest, RoleKeyString.Superuser, RoleKeyString.Guest)]
         public async Task<IActionResult> Create([FromQuery] DataRequest_Bill data)
         {
-            data.AccountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
+            data.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             return Ok(await _billServices.Create(data));
         }
 

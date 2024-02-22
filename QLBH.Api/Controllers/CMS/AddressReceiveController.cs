@@ -24,14 +24,14 @@ namespace QLBH.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Create([FromBody] Request_AddressReceive request_AddessReceive)
         {
-            request_AddessReceive.AccountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
+            request_AddessReceive.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             return Ok(await _addessReceive.Create(request_AddessReceive));
         }
         [HttpPost("Update/{AddressReceiveID}")]
         [Authorize]
         public async Task<IActionResult> UpdateAsync(long AddressReceiveID, [FromBody] Request_AddressReceive request_AddressReceive)
         {
-            request_AddressReceive.AccountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
+            request_AddressReceive.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             return Ok(await _addessReceive.Update(AddressReceiveID, request_AddressReceive));
         }
         [HttpDelete("Delete")]

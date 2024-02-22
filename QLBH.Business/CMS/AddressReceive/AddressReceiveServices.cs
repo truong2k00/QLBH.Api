@@ -32,25 +32,25 @@ namespace QLBH.Business
         {
             Address_Receive address = new Address_Receive
             {
-                AccountID = item.AccountID,
-                Address = item.Address,
-                Phone = item.Phone,
-                Full_Name = item.Full_Name,
-                Describe = item.Describe,
-                Email = item.Email,
+                AccountID = item.accountID,
+                Address = item.address,
+                Phone = item.phone,
+                Full_Name = item.fullName,
+                Describe = item.describe,
+                Email = item.email,
             };
             MailSetting mailsetting = await _baseRepositoryMailSetting.GetAsync(x => x.Code == EmailCode.XacThucEmail);
-            address.ConfirmEmail = MailSeeding.NewConfirmEmail(mailsetting, item.AccountID);
+            address.ConfirmEmail = MailSeeding.NewConfirmEmail(mailsetting, item.accountID);
             await _baseRepositoryAddress.CreateAsync(address);
             await SenderEmail(mailsetting, address);
             return new Respon_AddressReceive
             {
-                AddressID = address.ID,
-                Address = address.Address,
-                Phone = address.Phone,
-                Full_Name = address.Full_Name,
-                Describe = address.Describe,
-                Email = address.Email
+                addressID = address.ID,
+                address = address.Address,
+                phone = address.Phone,
+                fullName = address.Full_Name,
+                describe = address.Describe,
+                email = address.Email
             };
         }
 
@@ -73,20 +73,20 @@ namespace QLBH.Business
         public async Task<Respon_AddressReceive> Update(long ID, Request_AddressReceive item)
         {
             var Entity = await _baseRepositoryAddress.GetAsync(record => record.ID == ID);
-            Entity.Address = item.Address;
-            Entity.Phone = item.Phone;
-            Entity.Full_Name = item.Full_Name;
-            Entity.Describe = item.Describe;
-            Entity.Email = item.Email;
+            Entity.Address = item.address;
+            Entity.Phone = item.phone;
+            Entity.Full_Name = item.fullName;
+            Entity.Describe = item.describe;
+            Entity.Email = item.email;
             await _baseRepositoryAddress.UpdateAsync(Entity);
             return new Respon_AddressReceive
             {
-                AddressID = Entity.ID,
-                Address = Entity.Address,
-                Phone = Entity.Phone,
-                Full_Name = Entity.Full_Name,
-                Describe = Entity.Describe,
-                Email = Entity.Email
+                addressID = Entity.ID,
+                address = Entity.Address,
+                phone = Entity.Phone,
+                fullName = Entity.Full_Name,
+                describe = Entity.Describe,
+                email = Entity.Email
             };
         }
 
@@ -111,12 +111,12 @@ namespace QLBH.Business
             }
             var Data = query.Select(record => new Respon_AddressReceive
             {
-                AddressID = record.ID,
-                Address = record.Address,
-                Phone = record.Phone,
-                Full_Name = record.Full_Name,
-                Describe = record.Describe,
-                Email = record.Email
+                addressID = record.ID,
+                address = record.Address,
+                phone = record.Phone,
+                fullName = record.Full_Name,
+                describe = record.Describe,
+                email = record.Email
             });
             pagination.TotalCount = Data.Count();
             var result = PageResult<Respon_AddressReceive>.ToPageResult(pagination, Data);
@@ -128,12 +128,12 @@ namespace QLBH.Business
             var Data = await _baseRepositoryAddress.GetByIDAsync(AddressID);
             return new Respon_AddressReceive
             {
-                AddressID = Data.ID,
-                Address = Data.Address,
-                Phone = Data.Phone,
-                Full_Name = Data.Full_Name,
-                Describe = Data.Describe,
-                Email = Data.Email
+                addressID = Data.ID,
+                address = Data.Address,
+                phone = Data.Phone,
+                fullName = Data.Full_Name,
+                describe = Data.Describe,
+                email = Data.Email
             };
         }
         public string Code(string code)

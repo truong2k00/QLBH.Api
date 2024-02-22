@@ -52,7 +52,6 @@ namespace QLBH.Business
                 Is_New = item.Is_New,
                 Sale = item.Sale,
                 Date_Delete = null,
-                Is_Deleted = false,
                 Quantity = item.Quantity,
                 Price = item.Price,
                 Price_Sale = item.Price_Sale,

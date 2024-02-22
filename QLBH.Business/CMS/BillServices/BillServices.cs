@@ -29,8 +29,8 @@ namespace QLBH.Business
             var entity = new Bill
             {
                 Status_BillID = 1,
-                AccountID = item.AccountID,
-                Address_ReceiveID = item.Address_ReceiveID,
+                AccountID = item.accountID,
+                Address_ReceiveID = item.address_ReceiveID,
             };
             await _billRepository.CreateAsync(entity);
             if (item.invoiceDetail.Any())
@@ -51,12 +51,12 @@ namespace QLBH.Business
             var bill = _billRepository.GetQueryable(record => record.ID == entity.ID);
             var Data = bill.Select(item => new DataResponse_Bill
             {
-                BillId = item.ID,
-                Date_Create = item.Date_Create,
-                Status_BillID = item.Status_BillID,
-                AccountID = item.AccountID,
-                TotalPrice = item.TotalPrice,
-                Address_ReceiveID = item.Address_ReceiveID,
+                billId = item.ID,
+                dateCreate = item.Date_Create,
+                statusBillID = item.Status_BillID,
+                accountID = item.AccountID,
+                totalPrice = item.TotalPrice,
+                addressReceiveID = item.Address_ReceiveID,
                 InvoiceDetail = _invoiceServices.GetAll(item.ID).ToList(),
             }).FirstOrDefault();
             return Data;
@@ -82,12 +82,12 @@ namespace QLBH.Business
             var Data = await _billRepository.GetAsync(record => record.ID == ID);
             return new DataResponse_Bill
             {
-                BillId = Data.ID,
-                Date_Create = Data.Date_Create,
-                Status_BillID = Data.Status_BillID,
-                AccountID = Data.AccountID,
-                Address_ReceiveID = Data.Address_ReceiveID,
-                TotalPrice = Data.TotalPrice,
+                billId = Data.ID,
+                dateCreate = Data.Date_Create,
+                statusBillID = Data.Status_BillID,
+                accountID = Data.AccountID,
+                addressReceiveID = Data.Address_ReceiveID,
+                totalPrice = Data.TotalPrice,
                 InvoiceDetail = _invoiceServices.GetAll(Data.ID).ToList()
             };
         }
@@ -108,12 +108,12 @@ namespace QLBH.Business
             }
             var result = query.Select(item => new DataResponse_Bill
             {
-                BillId = item.ID,
-                Date_Create = item.Date_Create,
-                Status_BillID = item.Status_BillID,
-                AccountID = item.AccountID,
-                Address_ReceiveID = item.Address_ReceiveID,
-                TotalPrice = item.TotalPrice,
+                billId = item.ID,
+                dateCreate = item.Date_Create,
+                statusBillID = item.Status_BillID,
+                accountID = item.AccountID,
+                addressReceiveID = item.Address_ReceiveID,
+                totalPrice = item.TotalPrice,
                 InvoiceDetail = _invoiceServices.GetAll(item.ID)
             }).AsEnumerable();
             return result;
@@ -134,12 +134,12 @@ namespace QLBH.Business
                 await _billRepository.UpdateAsync(items);
                 return new DataResponse_Bill
                 {
-                    BillId = items.ID,
-                    Date_Create = items.Date_Create,
-                    Status_BillID = items.Status_BillID,
-                    AccountID = items.AccountID,
-                    TotalPrice = items.TotalPrice,
-                    Address_ReceiveID = items.Address_ReceiveID,
+                    billId = items.ID,
+                    dateCreate = items.Date_Create,
+                    statusBillID = items.Status_BillID,
+                    accountID = items.AccountID,
+                    totalPrice = items.TotalPrice,
+                    addressReceiveID = items.Address_ReceiveID,
                     InvoiceDetail = _invoiceServices.GetAll(items.ID).ToList(),
                 };
             }

@@ -23,7 +23,7 @@ namespace QLBH.Business
             _billRepository = billRepository;
             _invoiceServices = invoiceServices;
         }
-
+        ///
         public async Task<DataResponse_Bill> Create(DataRequest_Bill item)
         {
             var entity = new Bill

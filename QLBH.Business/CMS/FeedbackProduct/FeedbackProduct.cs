@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using QLBH.Models;
 using Microsoft.VisualStudio.Services.Identity;
+using Microsoft.Identity.Client;
+using Microsoft.VisualStudio.Services.Common.CommandLine;
+using static QLBH.Commons.Enums;
 
 namespace QLBH.Business
 {
@@ -24,25 +27,7 @@ namespace QLBH.Business
 
         public async Task<Response_Feedback> Create(Request_Feedback item)
         {
-            var product = await _baseRepositoryProduct.GetAsync(record => record.ID == item.IDProduct);
-            product.FeedBack = new List<FeedBack>
-            {
-                new FeedBack
-                {
-                    AccountID = item.accountId,
-                    Opinion = item.Opinion,
-                    FeedBack_Quality=item.FeedBack_Quality,
-                    star = item.Star
-                }
-            };
-            product.Evaluate = EvaluateStar(product.FeedBack.Select(x => (int)x.star).ToList());
-            await _baseRepositoryProduct.UpdateAsync(product);
-            return new Response_Feedback
-            {
-                FeedBack_Quality = item.FeedBack_Quality,
-                Opinion = item.Opinion,
-                Star = item.Star,
-            };
+
         }
         private decimal EvaluateStar(List<int> ints)
         {
@@ -101,6 +86,26 @@ namespace QLBH.Business
                 Opinion = item.Opinion,
                 Star = item.star,
             });
+        }
+
+        public async Task<IEnumerable<Response_Feedback>> Create(long accountId = 0, long productId = 0, Request_Feedback data)
+        {
+            var entity = new FeedBack();
+            entity.AccountID = data.accountId;
+            entity.Opinion = data.Opinion;
+            entity.FeedBack_Quality = data.FeedBack_Quality;
+            entity.star = data.Star;
+            if (productId > 0)
+            {
+                entity.ProductID = productId;
+            }
+            await _baseRepositoryFeedback.CreateAsync(entity);
+            return new Response_Feedback
+            {
+                FeedBack_Quality = entity.FeedBack_Quality,
+                Opinion = entity.Opinion,
+                Star = entity.star,
+            };
         }
     }
 }

@@ -53,11 +53,11 @@ namespace QLBH.Api.Controllers
         {
             return Ok(await _detailCartServices.Create(dataRequest_DetailCart));
         }
-        [HttpPost("Details/addCart")]
+        [HttpPost("Details/addCart/{meta}")]
         [Authorize]
-        public async Task<IActionResult> AddCard()
+        public async Task<IActionResult> AddCard(string meta)
         {
-            return Ok(await _detailCartServices.AddCart(dataRequest_DetailCart));
+            return Ok(await _detailCartServices.AddCart(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), meta));
         }
         [HttpPut("Details/Update/{ID}")]
         public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_DetailCart dataRequest_DetailCart)

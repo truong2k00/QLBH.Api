@@ -1,4 +1,5 @@
 ﻿using Microsoft.Identity.Client;
+using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.Identity;
 using QLBH.Models;
 using QLBH.Models.Entities;
@@ -37,7 +38,7 @@ namespace QLBH.Business
                 {
                     Cart = cart,
                     Product = dataproduct,
-                    Price = dataproduct.Price,
+                    Price = dataproduct.Sale ? dataproduct.Price * dataproduct.Price_Sale : dataproduct.Price,
                     Quantity = dataproduct.Quantity,
                     Cash = (decimal)dataproduct.Price * dataproduct.Quantity,
                 }
@@ -62,7 +63,7 @@ namespace QLBH.Business
                 Cart = Cart,
                 ProductID = data.ProductID,
                 Quantity = data.Quantity,
-                Price = product.Price,
+                Price = product.Sale ? product.Price * product.Price_Sale : product.Price,
                 Cash = (decimal)data.Quantity * product.Price,
             };
             await _detailCartRepository.CreateAsync(entity);

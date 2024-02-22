@@ -21,12 +21,13 @@ namespace QLBH.Api.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] Request_Feedback feedback)
         {
+            feedback.accountId = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             return Ok(await _feedbackServices.Create(feedback));
         }
         [HttpPut("Update/{AddressID}")]
-        public async Task<IActionResult> Update(long AddressID,[FromBody] Request_Feedback feedback)
+        public async Task<IActionResult> Update(long AddressID, [FromBody] Request_Feedback feedback)
         {
-            return Ok(await _feedbackServices.Update(AddressID,feedback));
+            return Ok(await _feedbackServices.Update(AddressID, feedback));
         }
         [HttpDelete("Delete/{AddressID}")]
         public async Task<IActionResult> Delete(long AddressID)

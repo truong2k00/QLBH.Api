@@ -30,19 +30,26 @@ namespace QLBH.Business
         //create Address receive
         public async Task Create(Request_AddressReceive item)
         {
-            Address_Receive address = new Address_Receive
+            try
             {
-                AccountID = item.accountID,
-                Address = item.address,
-                Phone = item.phone,
-                Full_Name = item.full_Name,
-                Describe = item.describe,
-                Email = item.email,
-            };
-            MailSetting mailsetting = await _baseRepositoryMailSetting.GetAsync(x => x.Code == EmailCode.XacThucEmail);
-            address.ConfirmEmail = MailSeeding.NewConfirmEmail(mailsetting, item.accountID);
-            await _baseRepositoryAddress.CreateAsync(address);
-            await SenderEmail(mailsetting, address);
+                Address_Receive address = new Address_Receive
+                {
+                    AccountID = item.accountID,
+                    Address = item.address,
+                    Phone = item.phone,
+                    Full_Name = item.full_Name,
+                    Describe = item.describe,
+                    Email = item.email,
+                };
+                MailSetting mailsetting = await _baseRepositoryMailSetting.GetAsync(x => x.Code == EmailCode.XacThucEmail);
+                address.ConfirmEmail = MailSeeding.NewConfirmEmail(mailsetting, item.accountID);
+                await _baseRepositoryAddress.CreateAsync(address);
+                await SenderEmail(mailsetting, address);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(Common_Constants.BaseOperation.create, ex);
+            }
         }
 
 
@@ -54,20 +61,28 @@ namespace QLBH.Business
                 entity.Deleted = true;
                 await _baseRepositoryAddress.UpdateAsync(entity);
             }
-            catch
+            catch (Exception ex)
             {
+                throw new Exception(Common_Constants.BaseOperation.delete, ex);
             }
         }
 
         public async Task Update(long ID, Request_AddressReceive item)
         {
-            var Entity = await _baseRepositoryAddress.GetAsync(record => record.ID == ID);
-            Entity.Address = item.address;
-            Entity.Phone = item.phone;
-            Entity.Full_Name = item.full_Name;
-            Entity.Describe = item.describe;
-            Entity.Email = item.email;
-            await _baseRepositoryAddress.UpdateAsync(Entity);
+            try
+            {
+                var Entity = await _baseRepositoryAddress.GetAsync(record => record.ID == ID);
+                Entity.Address = item.address;
+                Entity.Phone = item.phone;
+                Entity.Full_Name = item.full_Name;
+                Entity.Describe = item.describe;
+                Entity.Email = item.email;
+                await _baseRepositoryAddress.UpdateAsync(Entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(Common_Constants.BaseOperation.update, ex);
+            }
         }
 
         public PageResult<Respon_AddressReceive> GetAll(Pagination pagination, string KeyWord)
@@ -75,13 +90,13 @@ namespace QLBH.Business
             return GetAll(null, pagination, KeyWord);
         }
 
-        public PageResult<Respon_AddressReceive> GetAll(long? AccountID, Pagination pagination, string KeyWord)
+        public PageResult<Respon_AddressReceive> GetAll(long? accountID, Pagination pagination, string KeyWord)
         {
 
             var query = _baseRepositoryAddress.GetQueryable();
-            if (AccountID.HasValue)
+            if (accountID.HasValue)
             {
-                query = query.Where(record => record.AccountID == AccountID.Value);
+                query = query.Where(record => record.AccountID == accountID.Value);
             }
             if (KeyWord != null)
             {

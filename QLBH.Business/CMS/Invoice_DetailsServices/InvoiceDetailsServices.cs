@@ -23,13 +23,20 @@ namespace QLBH.Business
 
         public async Task Delete(long ID)
         {
-            await _InvoiceDetailsServices.DeleteAsync(ID);
+            try
+            {
+                await _InvoiceDetailsServices.DeleteAsync(ID);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(Common_Constants.BaseOperation.delete, ex);
+            }
         }
         public async Task DeleteAsync(long billId)
         {
-            var query = _InvoiceDetailsServices.GetQueryable(record => record.BillID == billId);
             try
             {
+                var query = _InvoiceDetailsServices.GetQueryable(record => record.BillID == billId);
                 foreach (var item in query)
                 {
                     item.Deleted = true;
@@ -71,13 +78,13 @@ namespace QLBH.Business
 
         public async Task Update(long accountId, long invoiceId, DataRequest_InvoidDetails data)
         {
-            var query = _InvoiceDetailsServices.GetQueryable(record => record.ID == invoiceId);
-            if (accountId > 0)
-            {
-                query = query.Where(record => record.Bill.AccountID == accountId);
-            }
             try
             {
+                var query = _InvoiceDetailsServices.GetQueryable(record => record.ID == invoiceId);
+                if (accountId != 0)
+                {
+                    query = query.Where(record => record.Bill.AccountID == accountId);
+                }
                 var item = query.FirstOrDefault();
                 item.UnitPrice = data.unitPrice;
                 item.Price = data.price;

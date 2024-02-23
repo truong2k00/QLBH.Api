@@ -26,27 +26,34 @@ namespace QLBH.Business
 
         public async Task Create(DataRequest_Bill item)
         {
-            var entity = new Bill
+            try
             {
-                Status_BillID = 1,
-                AccountID = item.accountID,
-                Address_ReceiveID = item.addressReceiveID,
-            };
-            await _billRepository.CreateAsync(entity);
-            if (item.invoiceDetail.Any())
-            {
-                entity.Invoice_Details = new List<Invoice_Details>();
-                foreach (var data in item.invoiceDetail)
+                var entity = new Bill
                 {
-                    entity.Invoice_Details.Add(new Invoice_Details
+                    Status_BillID = 1,
+                    AccountID = item.accountID,
+                    Address_ReceiveID = item.addressReceiveID,
+                };
+                await _billRepository.CreateAsync(entity);
+                if (item.invoiceDetail.Any())
+                {
+                    entity.Invoice_Details = new List<Invoice_Details>();
+                    foreach (var data in item.invoiceDetail)
                     {
-                        ProductID = data.productID,
-                        Quantity = data.quantity,
-                        UnitPrice = data.unitPrice,
-                        Price = data.price,
-                    });
+                        entity.Invoice_Details.Add(new Invoice_Details
+                        {
+                            ProductID = data.productID,
+                            Quantity = data.quantity,
+                            UnitPrice = data.unitPrice,
+                            Price = data.price,
+                        });
+                    }
+                    await _billRepository.UpdateAsync(entity);
                 }
-                await _billRepository.UpdateAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(Common_Constants.BaseOperation.create, ex);
             }
         }
 
@@ -61,7 +68,7 @@ namespace QLBH.Business
             }
             catch (Exception ex)
             {
-                throw new Exception(Common_Constants.ErrorExists.EmptyList, ex);
+                throw new Exception(Common_Constants.BaseOperation.create, ex);
             }
         }
         public async Task<DataResponse_Bill> GetByIDAsync(long ID)
@@ -77,6 +84,43 @@ namespace QLBH.Business
                 totalPrice = Data.TotalPrice,
                 invoiceDetail = _invoiceServices.GetAll(Data.ID).ToList()
             };
+        }
+
+        public async Task Update(long ID)
+        {
+            try
+            {
+                var items = await _billRepository.GetAsync(record => record.ID == ID && record.Deleted == false && record.Status_BillID > 1);
+                var data = _invoiceServices.GetAll(items.ID);
+                decimal totalPrice = 0;
+                foreach (var item in data)
+                {
+                    totalPrice += item.price;
+                }
+                items.TotalPrice = totalPrice;
+                await _billRepository.UpdateAsync(items);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(Common_Constants.BaseOperation.create, ex);
+            }
+
+        }
+
+        public async Task DeleteInvoice(long invoiceId)
+        {
+
+            try
+            {
+                var entity = await _invoiceServices.GetByID(invoiceId);
+                var billId = entity.BillID;
+                await _invoiceServices.Delete(entity.ID);
+                await Update(billId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(Common_Constants.BaseOperation.delete, ex);
+            }
         }
         public IEnumerable<DataResponse_Bill> GetBillAsync()
         {
@@ -104,38 +148,6 @@ namespace QLBH.Business
                 invoiceDetail = _invoiceServices.GetAll(item.ID)
             }).AsEnumerable();
             return result;
-        }
-
-        public async Task Update(long ID)
-        {
-            var items = await _billRepository.GetAsync(record => record.ID == ID && record.Deleted == false && record.Status_BillID > 1);
-            if (items != null)
-            {
-                var data = _invoiceServices.GetAll(items.ID);
-                decimal totalPrice = 0;
-                foreach (var item in data)
-                {
-                    totalPrice += item.price;
-                }
-                items.TotalPrice = totalPrice;
-                await _billRepository.UpdateAsync(items);
-            }
-            else { throw new Exception(Common_Constants.ErrorExists.EmptyList); }
-        }
-
-        public async Task DeleteInvoice(long invoiceId)
-        {
-            var entity = await _invoiceServices.GetByID(invoiceId);
-            var billId = entity.BillID;
-            try
-            {
-                await _invoiceServices.Delete(entity.ID);
-                await Update(billId);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(Common_Constants.ErrorExists.EmptyList, ex);
-            }
         }
     }
 }

@@ -14,6 +14,6 @@ namespace QLBH.Models.Entities
         public virtual Product Product { get; set; }
         public long Quantity { get; set; }
         public long Price { get; set; }
-        public decimal Cash {  get; set; }
+        public decimal TotalPrice { get; set; }
     }
 }

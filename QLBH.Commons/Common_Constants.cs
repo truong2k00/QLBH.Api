@@ -126,7 +126,12 @@ namespace QLBH.Commons
         {
             public const string EmptyList = "Does not exist";
             public const string AlreadyExist = "Already Exist";
-
+        }
+        public class BaseOperation
+        {
+            public const string create = "Cannot Create new";
+            public const string delete = "Cannot Delete";
+            public const string update = "Cannot Update";
         }
     }
 }

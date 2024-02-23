@@ -10,6 +10,6 @@ namespace QLBH.Business
 {
     public interface ICartServices : IReponsitory<DataRequest_Cart,long>
     {
-        Task<IEnumerable<Cart>> GetAllCart();
+        IEnumerable<Cart> GetAllCart();
     }
 }

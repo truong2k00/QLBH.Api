@@ -52,10 +52,10 @@ namespace QLBH.Api.Controllers
         }
 
 
-        [HttpGet("GetBill/{ID}")]
-        public async Task<IActionResult> GetByID(long ID)
+        [HttpGet("GetBill/{id}")]
+        public async Task<IActionResult> GetByID(long id)
         {
-            return Ok(await _billServices.GetByIDAsync(ID));
+            return Ok(await _billServices.GetByIDAsync(id));
         }
         #endregion
 
@@ -69,17 +69,17 @@ namespace QLBH.Api.Controllers
         }
 
 
-        [HttpPut("Update/{ID}")]
-        public async Task Update(long ID)
+        [HttpPut("Update/{id}")]
+        public async Task Update(long id)
         {
-            await _billServices.Update(ID);
+            await _billServices.Update(id);
         }
 
 
-        [HttpDelete("Delete/{ID}")]
-        public async Task Delete(long ID)
+        [HttpDelete("Delete/{id}")]
+        public async Task Delete(long id)
         {
-            await _billServices.Delete(ID);
+            await _billServices.Delete(id);
         }
 
 
@@ -91,19 +91,19 @@ namespace QLBH.Api.Controllers
 
 
         //Invoice Bill
-        [HttpPut("InvoiceUpdate/{ID}")]
+        [HttpPut("InvoiceUpdate/{id}")]
         [Authorize]
-        public async Task Update(long ID, [FromQuery] DataRequest_InvoidDetails dataRequest_)
+        public async Task Update(long id, [FromQuery] DataRequest_InvoidDetails dataRequest_)
         {
-            await _invoiceServices.Update(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), ID, dataRequest_);
+            await _invoiceServices.Update(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), id, dataRequest_);
         }
 
 
-        [HttpPut("Admin/InvoiceUpdate/{ID}")]
+        [HttpPut("Admin/InvoiceUpdate/{id}")]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Manager)]
-        public async Task UpdateAsync(long ID, [FromQuery] DataRequest_InvoidDetails dataRequest_)
+        public async Task UpdateAsync(long id, [FromQuery] DataRequest_InvoidDetails dataRequest_)
         {
-            await _invoiceServices.Update(0, ID, dataRequest_);
+            await _invoiceServices.Update(0, id, dataRequest_);
         }
     }
 }

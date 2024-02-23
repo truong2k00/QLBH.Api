@@ -21,21 +21,6 @@ namespace QLBH.Api.Controllers
             _cartServices = cartServices;
             _detailCartServices = detailCartServices;
         }
-        [HttpPut("Update/{id}")]
-        public async Task Update(long id, [FromQuery] DataRequest_Cart data)
-        {
-            await _cartServices.Update(id, data);
-        }
-        [HttpDelete("Delete/{id}")]
-        public async Task Delete(long id)
-        {
-            await _cartServices.Delete(id);
-        }
-        [HttpPost("Create")]
-        public async Task Create([FromQuery] DataRequest_Cart data)
-        {
-            await _cartServices.Create(data);
-        }
         [HttpGet("GetAllCart")]
         public IActionResult GetByAccount()
         {

@@ -31,6 +31,11 @@ namespace QLBH.Api.Controllers
         {
             await _cartServices.Delete(id);
         }
+        [HttpPost("Create")]
+        public async Task Create([FromQuery] DataRequest_Cart data)
+        {
+            await _cartServices.Create(data);
+        }
         [HttpGet("GetAllCart")]
         public IActionResult GetByAccount()
         {

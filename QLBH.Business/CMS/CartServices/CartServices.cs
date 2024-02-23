@@ -26,6 +26,7 @@ namespace QLBH.Business
                     };
                     await _cartRepository.CreateAsync(entity);
                 }
+                throw new Exception("Cannot be empty");
             }
             catch (Exception ex)
             {

@@ -46,21 +46,31 @@ namespace QLBH.Commons
                     return imageUrl;
                 }
             }
-            public string RemoveImage(string Url)
+            public string RemoveImage(string url = "")
             {
+                var urls = new string[] { url };
+                return RemoveImage(urls);
+            }
+            public string RemoveImage(params string[] urls)
+            {
+                var lists = new List<string>();
                 // Giải mã URL một lần
-                Url = HttpUtility.UrlDecode(Url);
+                foreach (var url in urls)
+                {
+                    var Url = HttpUtility.UrlDecode(url);
 
-                // Mã hóa lại URL một lần
+                    // Mã hóa lại URL một lần
 
-                string stringUrl = Url.Replace("https://res.cloudinary.com/dnitjp0ng/image/upload/v1705602389/", "");
-                int index = stringUrl.LastIndexOf('.');
-                string publicId = stringUrl.Substring(0, index);
+                    string stringUrl = Url.Replace("https://res.cloudinary.com/dnitjp0ng/image/upload/v1705602389/", "");
+                    int index = stringUrl.LastIndexOf('.');
+                    string publicId = stringUrl.Substring(0, index);
+                    lists.Add(publicId);
+                }
 
                 // Xóa hình ảnh
                 DelResParams delParams = new DelResParams
                 {
-                    PublicIds = new List<string> { publicId }
+                    PublicIds = lists
                 };
 
                 DelResResult delResult = _cloudinary.DeleteResources(delParams);

@@ -3,6 +3,7 @@ using CloudinaryDotNet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Web;
 
 namespace QLBH.Commons
 {
@@ -45,25 +46,26 @@ namespace QLBH.Commons
                     return imageUrl;
                 }
             }
-            public string RemoveImage(string url)
+            public string RemoveImage(string Url)
             {
-                Uri uri = new Uri(url);
-                string path = uri.AbsolutePath;
+                // Giải mã URL một lần
+                Url = HttpUtility.UrlDecode(Url);
 
-                // Tách lấy phần cuối của path
-                string[] segments = path.Split('/');
-                string publicIdWithExtension = segments[segments.Length - 1];
+                // Mã hóa lại URL một lần
 
-                // Loại bỏ phần mở rộng từ publicId
-                int index = publicIdWithExtension.LastIndexOf('.');
-                string name = publicIdWithExtension.Substring(0, index);
+                string stringUrl = Url.Replace("https://res.cloudinary.com/dnitjp0ng/image/upload/v1705602389/", "");
+                int index = stringUrl.LastIndexOf('.');
+                string publicId = stringUrl.Substring(0, index);
 
+                // Xóa hình ảnh
                 DelResParams delParams = new DelResParams
                 {
-                    PublicIds = new List<string> { name }
+                    PublicIds = new List<string> { publicId }
                 };
-                var result = _cloudinary.DeleteResources(delParams);
-                return result.StatusCode.ToString();
+
+                DelResResult delResult = _cloudinary.DeleteResources(delParams);
+
+                return delResult.StatusCode.ToString();
             }
         }
     }

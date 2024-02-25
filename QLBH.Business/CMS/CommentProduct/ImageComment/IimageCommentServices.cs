@@ -9,8 +9,9 @@ namespace QLBH.Business
 {
     public interface IimageCommentServices<TEntity, Bind>
     {
-        Task<bool> Delete(Bind ID);
-        Task<IEnumerable<TEntity>> Update(string Username, Bind ID, RequestFiles files);
+        Task Delete(Bind id);
+        Task Update(string Username, Bind id, RequestFiles files);
         Task<TEntity> GetById(Bind id);
+        Task<object> GetById(object iDImage);
     }
 }

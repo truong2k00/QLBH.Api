@@ -11,9 +11,8 @@ namespace QLBH.Business
 {
     public interface ICommentProduct<TEntity> : IReponsitory<DataRequest_CommentProduct, long>
     {
-        Task CreateAsync(TEntity entity, RequestFiles File);
-        Task<bool> DeleteAsync(long accountId, long id);
-        PageResult<DataRespon_CommentProduct> GetAll(Pagination pagination, string KeyWord);
-        PageResult<DataRespon_CommentProduct> GetAll(long productId, long accountId, Pagination pagination, string KeyWord);
+        Task Create(TEntity entity, RequestFiles File);
+        Task Delete(long accountId, long id);
+        PageResult<DataRespon_CommentProduct> GetAll(Pagination pagination,long accountId = 0, long productId = 0, string KeyWord = null);
     }
 }

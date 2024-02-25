@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.Services.Identity;
+using QLBH.Commons;
 using QLBH.Models;
 using QLBH.Models.Entities;
 using QLBH.Repository;
@@ -32,7 +33,7 @@ namespace QLBH.Business
             {
                 Type_Name = data.type_Name,
                 ProductID = data.productID,
-                Image = await _handleUpload.UploadImage(_contextAccessor.HttpContext.User.FindFirst(Clames.USER).Value, data.image)
+                Image = await _handleUpload.UploadImage(_contextAccessor.HttpContext.User.FindFirst(Clames.USER).Value, $"{CloudUpoad.FolderImage.Folder_Product}/{CloudUpoad.FolderImage.Folder_TypeProduct}", data.image)
             };
             await _repository.CreateAsync(Entity);
         }

@@ -58,6 +58,7 @@ namespace QLBH.Commons
             public class FolderImage
             {
                 public const string Folder_Product = "Product";
+                public const string Folder_TypeProduct = "TypeProduct";
                 public const string Folder_Comment = "Comment";
                 public const string Folder_Category = "Category";
             }

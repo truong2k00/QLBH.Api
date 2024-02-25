@@ -32,7 +32,7 @@ namespace QLBH.Business
         {
             ImageProduct image = new ImageProduct
             {
-                Image_Url = await _uploadImage.UploadImage(_httpContext.HttpContext.User.FindFirst("User").Value, item.file),
+                Image_Url = await _uploadImage.UploadImage(_httpContext.HttpContext.User.FindFirst("User").Value, Common_Constants.CloudUpoad.FolderImage.Folder_Product, item.file),
                 Product = await _baseRepositoryProduct.GetByIDAsync(item.product_ID)
             };
             await _baseRepositoryImgProduct.CreateAsync(image);
@@ -77,7 +77,7 @@ namespace QLBH.Business
             var entity = new ImageProduct
             {
                 Image_Url = await _uploadImage.UploadImage(
-                    _httpContext.HttpContext.User.FindFirst(clames.USER).Value, item.file),
+                    _httpContext.HttpContext.User.FindFirst(clames.USER).Value, Common_Constants.CloudUpoad.FolderImage.Folder_Product, item.file),
                 Product = await _baseRepositoryProduct.GetByIDAsync(item.product_ID)
             };
             await _baseRepositoryImgProduct.DeleteAsync(ID);

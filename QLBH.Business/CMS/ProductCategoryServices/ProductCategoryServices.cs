@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using static QLBH.Commons.ImageHepper;
 using static QLBH.Commons.Common_Constants;
+using QLBH.Commons;
 
 namespace QLBH.Business.CMS
 {
@@ -34,7 +35,7 @@ namespace QLBH.Business.CMS
             var Entity = new ProductCategory
             {
                 CategoryName = data.categoryName,
-                Image = await _handleUpload.UploadImage(_contextAccessor.HttpContext.User.FindFirst(Clames.USER).Value, data.files)
+                Image = await _handleUpload.UploadImage(_contextAccessor.HttpContext.User.FindFirst(Clames.USER).Value, CloudUpoad.FolderImage.Folder_Category, data.files)
             };
             await _repository.CreateAsync(Entity);
         }

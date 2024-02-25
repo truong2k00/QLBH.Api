@@ -16,7 +16,7 @@ namespace QLBH.Commons
             public UploadImages(IConfiguration configuration)
             {
                 _configuration = configuration;
-                _cloudinary = new Cloudinary(new CloudinaryDotNet.Account(_configuration.GetSection(Common_Constants.AppsettingCloudinary.CloudinaryName).Value,
+                _cloudinary = new Cloudinary(new Account(_configuration.GetSection(Common_Constants.AppsettingCloudinary.CloudinaryName).Value,
                                                         _configuration.GetSection(Common_Constants.AppsettingCloudinary.CloudinaryAPIKey).Value,
                                                         _configuration.GetSection(Common_Constants.AppsettingCloudinary.CloudinarySecret).Value));
             }

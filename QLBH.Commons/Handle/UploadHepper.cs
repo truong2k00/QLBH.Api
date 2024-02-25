@@ -21,7 +21,7 @@ namespace QLBH.Commons
                                                         _configuration.GetSection(Common_Constants.AppsettingCloudinary.CloudinarySecret).Value));
             }
 
-            public async Task<string> UploadImage(string user, IFormFile file)
+            public async Task<string> UploadImage(string user, string typeFolder, IFormFile file)
             {
                 if (file == null || file.Length == 0)
                 {
@@ -32,9 +32,7 @@ namespace QLBH.Commons
                     var uploadParams = new ImageUploadParams
                     {
                         File = new FileDescription(file.FileName, stream),
-                        PublicId = Common_Constants.CloudUpoad.FolderImage.Folder_Product + "/" +
-                        user + Common_Constants.CloudUpoad.Sourc_NewImage
-                        + DateTime.Now.Ticks + "image",
+                        PublicId = $"{_configuration.GetConnectionString(Common_Constants.FolderSystem)} / {typeFolder}/{user} + {Common_Constants.CloudUpoad.Sourc_NewImage}{DateTime.Now.Ticks}image",
                         Transformation = new Transformation().Width(300).Height(400).Crop("fill")
                     };
                     var uploadResult = await _cloudinary.UploadAsync(uploadParams);

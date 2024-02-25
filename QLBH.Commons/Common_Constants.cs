@@ -12,6 +12,7 @@ namespace QLBH.Commons
     public class Common_Constants
     {
         public const string NameSystem = "Quản Lý Bán Hàng";
+        public const string FolderSystem = "FolderSystem";
         public const string Email = "aptruong6@gmail.com";
         public const string Hotline = "0981086913";
         public class AppSettingKeys
@@ -58,6 +59,8 @@ namespace QLBH.Commons
             public class FolderImage
             {
                 public const string Folder_Product = "Product";
+                public const string Folder_Comment = "Comment";
+                public const string Folder_Category = "Category";
             }
         }
         public class SQLRaw

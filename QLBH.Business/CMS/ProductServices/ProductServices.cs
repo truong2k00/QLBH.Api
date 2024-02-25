@@ -11,6 +11,7 @@ using clames = QLBH.Commons.Common_Constants.Clames;
 using static QLBH.Commons.ImageHepper;
 using System.Security.Policy;
 using Microsoft.VisualStudio.Services.Identity;
+using QLBH.Commons;
 #pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
 
 namespace QLBH.Business
@@ -85,7 +86,7 @@ namespace QLBH.Business
             {
                 productImages.Add(new ImageProduct
                 {
-                    Image_Url = await _handleUpload.UploadImage(_httpContextAccessor.HttpContext.User.FindFirst(clames.USER).Value, file)
+                    Image_Url = await _handleUpload.UploadImage(_httpContextAccessor.HttpContext.User.FindFirst(clames.USER).Value, Common_Constants.CloudUpoad.FolderImage.Folder_Product, file)
                 });
             }
             return productImages;

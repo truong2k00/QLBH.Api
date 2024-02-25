@@ -32,7 +32,7 @@ namespace QLBH.Commons
                     var uploadParams = new ImageUploadParams
                     {
                         File = new FileDescription(file.FileName, stream),
-                        PublicId = $"{_configuration.GetConnectionString(Common_Constants.FolderSystem)} / {typeFolder}/{user} + {Common_Constants.CloudUpoad.Sourc_NewImage}{DateTime.Now.Ticks}image",
+                        PublicId = $"{_configuration.GetSection(Common_Constants.CloudUpoad.FolderSystem).Value} / {typeFolder}/{user} + {Common_Constants.CloudUpoad.Sourc_NewImage}{DateTime.Now.Ticks}image",
                         Transformation = new Transformation().Width(300).Height(400).Crop("fill")
                     };
                     var uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -58,8 +58,9 @@ namespace QLBH.Commons
                     var Url = HttpUtility.UrlDecode(url);
 
                     // Mã hóa lại URL một lần
+                    var HostName = $"{_configuration.GetSection(Common_Constants.CloudUpoad.Host).Value}{_configuration.GetSection(Common_Constants.AppsettingCloudinary.CloudinaryName).Value}{_configuration.GetSection(Common_Constants.CloudUpoad.Path).Value}";
 
-                    string stringUrl = Url.Replace("https://res.cloudinary.com/dnitjp0ng/image/upload/v1705602389/", "");
+                    string stringUrl = Url.Replace(HostName, "");
                     int index = stringUrl.LastIndexOf('.');
                     string publicId = stringUrl.Substring(0, index);
                     lists.Add(publicId);

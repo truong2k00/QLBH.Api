@@ -58,9 +58,13 @@ namespace QLBH.Business
                 ListImage.Add(new Image_Comment
                 {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     href = await _uploadImages.UploadImage(name,Common_Constants.CloudUpoad.FolderImage.Folder_Comment, file),
 =======
                     href = await _uploadImages.UploadImage(name,"", file),
+>>>>>>> Stashed changes
+=======
+                    href = await _uploadImages.UploadImage(name,Common_Constants.CloudUpoad.FolderImage.Folder_Comment, file),
 >>>>>>> Stashed changes
                 });
             }

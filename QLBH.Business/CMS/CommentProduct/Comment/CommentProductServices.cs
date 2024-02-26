@@ -13,26 +13,21 @@ namespace QLBH.Business
 {
     public class CommentProductServices : ICommentProduct<DataRequest_CommentProduct>
     {
-        private readonly IHttpContextAccessor _httpContext;
         private readonly UploadImages _uploadImages;
         private readonly IBaseRepository<Comment_Product> _repositoryComment;
-        private readonly IBaseRepository<Account> _repositoryAccount;
-        private readonly ResponcesObject<DataRespon_CommentProduct> _dataRespon;
 
-        public CommentProductServices(IHttpContextAccessor httpContext
-            , UploadImages uploadImages
-            , ResponcesObject<DataRespon_CommentProduct> dataRespon
-            , IBaseRepository<Comment_Product> repositoryComment
-            , IBaseRepository<Account> repositoryAccount)
+        public CommentProductServices(UploadImages uploadImages, IBaseRepository<Comment_Product> repositoryComment)
         {
-            _repositoryAccount = repositoryAccount;
-            _dataRespon = dataRespon;
             _uploadImages = uploadImages;
-            _httpContext = httpContext;
             _repositoryComment = repositoryComment;
         }
 
         public async Task Create(DataRequest_CommentProduct entity)
+        {
+            await Create(entity, null);
+        }
+
+        public async Task Create(DataRequest_CommentProduct entity, RequestFiles files)
         {
             try
             {
@@ -43,27 +38,17 @@ namespace QLBH.Business
                     ProductID = entity.productID,
                     AccountID = entity.accountID
                 };
+                if (files.files.Any())
+                {
+                    comment.Image_Comment = await GenerateImageComment("Comment", files.files);
+                }
                 await _repositoryComment.CreateAsync(comment);
             }
             catch (Exception ex)
             {
-                throw new NotImplementedException(ex.Message);
+                Console.WriteLine($"Error: {ex}");
+                throw;
             }
-        }
-
-        public async Task CreateAsync(
-            DataRequest_CommentProduct entity, RequestFiles Files)
-        {
-            var comment = new Comment_Product
-            {
-                Datetime_Comment = DateTime.Now,
-                Opinion = entity.opinion,
-                ProductID = entity.productID,
-                AccountID = entity.accountID
-            };
-            Account account = await _repositoryAccount.GetByIDAsync(entity.accountID);
-            comment.Image_Comment = await GenerateImageComment("Comment", Files.files);
-            await _repositoryComment.CreateAsync(comment);
         }
         private async Task<List<Image_Comment>> GenerateImageComment(string name, List<IFormFile> files)
         {
@@ -72,44 +57,60 @@ namespace QLBH.Business
             {
                 ListImage.Add(new Image_Comment
                 {
-                    href = await _uploadImages.UploadImage(name, file),
+                    href = await _uploadImages.UploadImage(name,Common_Constants.CloudUpoad.FolderImage.Folder_Comment, file),
                 });
             }
             return ListImage;
         }
-        public Task Delete(long ID)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task Update(long ID, DataRequest_CommentProduct item)
         {
-            var comment = await _repositoryComment.GetAsync(record => record.ID == ID);
-            comment.Opinion = item.opinion;
-            await _repositoryComment.UpdateAsync(comment);
+            try
+            {
+                var comment = await _repositoryComment.GetAsync(record => record.ID == ID);
+                comment.Opinion = item.opinion;
+                await _repositoryComment.UpdateAsync(comment);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                throw;
+            }
         }
-
-        public PageResult<DataRespon_CommentProduct> GetAll(Pagination pagination, string KeyWord)
+        public async Task Delete(long id)
         {
-            return GetAll(0, 0, pagination, KeyWord);
+            await _repositoryComment.DeleteAsync(id);
         }
-
-        public Task<bool> DeleteAsync(long accountId, long id)
+        public async Task Delete(long accountId, long id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var query = _repositoryComment.GetQueryable(record => record.ID == id);
+                if (accountId != 0)
+                {
+                    query = query.Where(record => record.AccountID == accountId);
+                }
+                if (query.Any())
+                {
+                    foreach (var item in query)
+                    {
+                        _uploadImages.RemoveImage(item.Image_Comment.Select(record => record.href).ToArray());
+                        await _repositoryComment.DeleteAsync(item.ID);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                throw;
+            }
         }
-
-        public PageResult<DataRespon_CommentProduct> GetAll(long productId = 0, Pagination pagination = null, string KeyWord = null)
-        {
-            return GetAll(productId, 0, pagination, KeyWord);
-        }
-
-        public PageResult<DataRespon_CommentProduct> GetAll(long productId, long accountId, Pagination pagination, string KeyWord)
+        public PageResult<DataRespon_CommentProduct> GetAll(Pagination pagination,long accountId = 0, long productId = 0, string KeyWord = null)
         {
             var query = _repositoryComment.GetQueryable();
-            if (productId > 0) query.Where(record => record.ProductID == productId);
+            if (productId != 0) query = query.Where(record => record.ProductID == productId);
 
-            if (accountId > 0) query.Where(record => record.AccountID == accountId);
+            if (accountId != 0) query = query.Where(record => record.AccountID == accountId);
 
             if (KeyWord != null)
                 query = query.Where(record => record.Product.Product_Name.ToLower().Contains(KeyWord.ToLower()));

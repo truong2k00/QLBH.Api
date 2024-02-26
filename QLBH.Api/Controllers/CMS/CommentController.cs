@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Services.Tokens;
+using QLBH.Api.Extensions;
 using QLBH.Business;
 using QLBH.Commons.Common_Page;
 using QLBH.Models;
@@ -24,51 +24,48 @@ namespace QLBH.Api.Controllers
             _imageCommentServices = imagecommentServices;
         }
         [HttpPost("Create")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> Create([FromForm] DataRequest_CommentProduct comment
-            , [FromForm] RequestFiles Files)
+        public async Task Create([FromForm] DataRequest_CommentProduct comment
+            , [FromForm] RequestFiles files)
         {
             comment.accountID = Convert.ToInt64(HttpContext.User.FindFirst(Clames.ID).Value);
-            await _commentServices.CreateAsync(comment, Files);
-            return Ok();
+            await _commentServices.Create(comment, files.files.Any() ? files : null);
         }
         [HttpPut("Upadte/{ID}")]
-        public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_CommentProduct dataRequest_CommentProduct)
+        public async Task Update(long ID, [FromQuery] DataRequest_CommentProduct dataRequest_CommentProduct)
         {
             await _commentServices.Update(ID, dataRequest_CommentProduct);
-            return Ok();
         }
         [HttpDelete("Delete/{ID}")]
-        public async Task<IActionResult> Delete(long ID)
+        [Authorize(RoleKeyString.Editor)]
+        public async Task Delete(long ID)
         {
-            await _commentServices.Delete(ID);
-            return Ok();
+            await _commentServices.Delete(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), ID);
         }
         [HttpGet("GetAll")]
-        public IActionResult GetAll([FromQuery] Request_Pagination request_Pagination, [FromQuery] string KeyWord = null)
+        public IActionResult GetAll([FromQuery] Request_Pagination request_Pagination, [FromQuery] long accountid, long productid, [FromQuery] string keyWord)
         {
             return Ok(_commentServices.GetAll(new Pagination
             {
                 PageNumber = request_Pagination.pageNumber,
                 PageSize = request_Pagination.pageSize
-            }, KeyWord));
+            }, accountid, productid, keyWord));
         }
         //image comment
         [HttpPut("UpdateImage/{IDComment}")]
-        public async Task<IActionResult> updateImage(long IDComment, [FromForm] RequestFiles Files)
+        public async Task updateImage(long commentID, [FromForm] RequestFiles Files)
         {
             var username = HttpContext.User.FindFirst(Clames.USER).Value;
-            return Ok(await _imageCommentServices.Update(username, IDComment, Files));
+            await _imageCommentServices.Update(username, commentID, Files);
         }
-        [HttpDelete("DeleteImage/{IDImage}")]
-        public async Task<IActionResult> DeleteImage(long IDImage)
+        [HttpDelete("DeleteImage/{imageID}")]
+        public async Task DeleteImage(long imageID)
         {
-            return Ok(await _imageCommentServices.Delete(IDImage));
+            await _imageCommentServices.Delete(imageID);
         }
-        [HttpGet("GetImage/{IDImage}")]
-        public async Task<IActionResult> GetImage(long IDImage)
+        [HttpGet("GetImage/{imageID}")]
+        public async Task<IActionResult> GetImage(long imageID)
         {
-            return Ok(await _imageCommentServices.GetById(IDImage));
+            return Ok(await _imageCommentServices.GetById(imageID));
         }
     }
 }

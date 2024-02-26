@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static QLBH.Commons.ImageHepper;
 using System.ComponentModel.Design;
+using QLBH.Commons;
 
 namespace QLBH.Business
 {
@@ -17,25 +18,24 @@ namespace QLBH.Business
         private readonly IBaseRepository<Image_Comment> _imageRepository;
 
         private readonly UploadImages _uploadImages;
-        public ImageCommentServices(IBaseRepository<Image_Comment> imageRepository,
-            UploadImages uploadImages)
+        public ImageCommentServices(IBaseRepository<Image_Comment> imageRepository, UploadImages uploadImages)
         {
             _imageRepository = imageRepository;
             _uploadImages = uploadImages;
         }
 
-        public async Task<bool> Delete(long ID)
+        public async Task Delete(long id)
         {
             try
             {
-                var data = await _imageRepository.GetByIDAsync(ID);
-                data.Deleted = true;
-                await _imageRepository.UpdateAsync(data);
-                return true;
+                var query = _imageRepository.GetQueryable(record => record.ID == id);
+                _uploadImages.RemoveImage(query.Select(item => item.href).ToArray());
+                await _imageRepository.DeleteAsync(id);
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                Console.WriteLine($"Error: {ex}");
+                throw;
             }
         }
 
@@ -50,25 +50,27 @@ namespace QLBH.Business
             };
         }
 
-        public async Task<IEnumerable<DataRespon_ImageComment>> Update(string UserName, long ID, RequestFiles files)
+        public async Task Update(string UserName, long ID, RequestFiles files)
         {
-            var Data = await _imageRepository.GetAllAsync(record => record.Comment_ProductID == ID);
-            if (Data.Any())
+            try
             {
-                foreach (var item in Data)
+                var Data = await _imageRepository.GetAllAsync(record => record.Comment_ProductID == ID);
+                if (Data.Any())
                 {
-                    _uploadImages.RemoveImage(item.href);
-                    await _imageRepository.DeleteAsync(item.ID);
+                    foreach (var item in Data)
+                    {
+                        _uploadImages.RemoveImage(item.href);
+                        await _imageRepository.DeleteAsync(item.ID);
+                    }
                 }
+                await Create(UserName, ID, files.files);
+                var data = await _imageRepository.GetAllAsync(record => record.Comment_ProductID == ID);
             }
-            await Create(UserName, ID, files.files);
-            var data = await _imageRepository.GetAllAsync(record => record.Comment_ProductID == ID);
-            return data.Select(item => new DataRespon_ImageComment
+            catch (Exception ex)
             {
-                imageCommentID = item.ID,
-                commentProductID = item.Comment_ProductID,
-                href = item.href
-            });
+                Console.WriteLine($"Error: {ex}");
+                throw;
+            }
         }
         public async Task Create(string Username, long CommentID, List<IFormFile> files)
         {
@@ -77,7 +79,7 @@ namespace QLBH.Business
                 await _imageRepository.CreateAsync(new Image_Comment
                 {
                     Comment_ProductID = CommentID,
-                    href = await _uploadImages.UploadImage(Username, file),
+                    href = await _uploadImages.UploadImage(Username, Common_Constants.CloudUpoad.FolderImage.Folder_Comment, file),
                     Deleted = false,
                 });
             }

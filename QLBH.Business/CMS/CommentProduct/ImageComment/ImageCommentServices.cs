@@ -79,7 +79,11 @@ namespace QLBH.Business
                 await _imageRepository.CreateAsync(new Image_Comment
                 {
                     Comment_ProductID = CommentID,
+<<<<<<< Updated upstream
                     href = await _uploadImages.UploadImage(Username, Common_Constants.CloudUpoad.FolderImage.Folder_Comment, file),
+=======
+                    href = await _uploadImages.UploadImage(Username,"", file),
+>>>>>>> Stashed changes
                     Deleted = false,
                 });
             }

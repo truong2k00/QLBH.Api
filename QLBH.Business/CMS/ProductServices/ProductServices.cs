@@ -12,6 +12,7 @@ using static QLBH.Commons.ImageHepper;
 using System.Security.Policy;
 using Microsoft.VisualStudio.Services.Identity;
 using QLBH.Commons;
+using Microsoft.VisualStudio.Services.Common;
 #pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
 
 namespace QLBH.Business
@@ -19,51 +20,46 @@ namespace QLBH.Business
     public class ProductServices : IProductServices<DataResponse_Product, int>
     {
         private readonly UploadImages _handleUpload;
-        private readonly AppDbContext _appDbContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IBaseRepository<Product> _baseRepositoryProduct;
         private readonly IBaseRepository<Account> _baseRepositoryAccount;
-        private readonly IBaseRepository<ProductCategory> _baseRepositoryCategory;
 
-        public ProductServices(IBaseRepository<Account> baseRepositoryAccount
-            , UploadImages handleUpload
-            , IHttpContextAccessor httpContextAccessor
-            , AppDbContext appDbContext
+        public ProductServices(UploadImages handleUpload
             , IBaseRepository<Product> baseRepositoryProduct
-            , IBaseRepository<ProductCategory> baseRepositoryCategory)
+            , IBaseRepository<Account> baseRepositoryAccount)
         {
             _handleUpload = handleUpload;
-            _httpContextAccessor = httpContextAccessor;
-            _appDbContext = appDbContext;
             _baseRepositoryProduct = baseRepositoryProduct;
-            _baseRepositoryCategory = baseRepositoryCategory;
             _baseRepositoryAccount = baseRepositoryAccount;
         }
         public async Task Create(Request_Product item, RequestFiles files)
         {
-            var account = await _baseRepositoryAccount.GetAsync(record => record.ID ==
-                long.Parse(_httpContextAccessor.HttpContext.User.FindFirst(clames.ID).Value));
-            var product = new List<Product>();
-            Product entity = new Product
+            try
             {
-                Product_Name = item.product_Name,
-                Product_Description = item.productDescription,
-                Meta_Product = Guid.NewGuid().ToString(),
-                ProductCatogory = await _baseRepositoryCategory.GetAsync(x => x.ID == item.categoryID),
-                Is_New = item.isNew,
-                Sale = item.sale,
-                Date_Delete = null,
-                Is_Deleted = false,
-                Quantity = item.quantity,
-                Price = item.price,
-                Price_Sale = item.priceSale,
-                Evaluate = 5,
-                Deleted = false,
-                ImageProduct = await GenerateImageProduct(files.files)
-            };
-            product.Add(entity);
-            account.Product = product;
-            await _baseRepositoryAccount.UpdateAsync(account);
+                var username = (await _baseRepositoryAccount.GetAsync(record => record.ID == item.accountID)).User_Name;
+                Product entity = new Product
+                {
+                    AccountID = item.accountID,
+                    Product_Name = item.product_Name,
+                    Product_Description = item.productDescription,
+                    Meta_Product = Guid.NewGuid().ToString(),
+                    ProductCatogoryID = item.categoryID,
+                    Is_New = item.isNew,
+                    Sale = item.sale,
+                    Date_Delete = null,
+                    Quantity = item.quantity,
+                    Price = item.price,
+                    Price_Sale = item.priceSale,
+                    Evaluate = 5,
+                    Deleted = false,
+                    ImageProduct = await GenerateImageProduct(username, files.files)
+                };
+                await _baseRepositoryProduct.CreateAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                throw;
+            }
         }
         private static List<Respon_ImageProduct> imageURL(List<ImageProduct> images)
         {
@@ -78,94 +74,52 @@ namespace QLBH.Business
             }
             return listimage;
         }
-        public async Task<List<ImageProduct>> GenerateImageProduct(List<IFormFile> Files)
+        public async Task<List<ImageProduct>> GenerateImageProduct(string username, List<IFormFile> Files)
         {
-            if (Files == null) return null;
+            if (Files.Any()) return null;
             var productImages = new List<ImageProduct>();
             foreach (var file in Files)
             {
                 productImages.Add(new ImageProduct
                 {
-                    Image_Url = await _handleUpload.UploadImage(_httpContextAccessor.HttpContext.User.FindFirst(clames.USER).Value, Common_Constants.CloudUpoad.FolderImage.Folder_Product, file)
+                    Image_Url = await _handleUpload.UploadImage(username, Common_Constants.CloudUpoad.FolderImage.Folder_Product, file)
                 });
             }
             return productImages;
         }
-        public async Task Delete(long ID)
+        public async Task Delete(long id)
         {
-            var product = await _appDbContext.Product.FirstOrDefaultAsync(x => x.ID == ID);
-            product.Deleted = true;
-            await _baseRepositoryProduct.UpdateAsync(product);
-        }
-        public async Task Update(long IDProduct, Request_Product item, RequestFiles file)
-        {
-            var productEntity = await _baseRepositoryProduct.GetAsync(x => x.ID == IDProduct);
-            if (productEntity != null)
+            try
             {
+                var product = await _baseRepositoryProduct.GetAsync(record => record.ID == id);
+                product.Deleted = true;
+                await _baseRepositoryProduct.UpdateAsync(product);
             }
-            else
+            catch (Exception ex)
             {
-                productEntity.Deleted = true;
-                productEntity.Date_Delete = DateTime.Now;
+                Console.WriteLine($"Error: {ex}");
+                throw;
+            }
+        }
+        public async Task Update(long productID, Request_Product item, RequestFiles file)
+        {
+            try
+            {
+                var productEntity = await _baseRepositoryProduct.GetAsync(record => record.ID == productID);
+                productEntity.Product_Name = item.product_Name;
+                productEntity.Product_Description = item.productDescription;
+                productEntity.Is_New = item.isNew;
+                productEntity.Sale = item.sale;
+                productEntity.Quantity = item.quantity;
+                productEntity.Price = item.price;
+                productEntity.Price_Sale = item.priceSale;
                 await _baseRepositoryProduct.UpdateAsync(productEntity);
             }
-        }
-
-        public Task<DataResponse_Product> GetByID(int ID)
-        {
-            throw new Exception();
-        }
-
-        public PageResult<DataResponse_Product> GetAll(Pagination pagination, string KeyWord)
-        {
-            var query = _baseRepositoryProduct.GetQueryable(record => record.Deleted == false);
-            if (!KeyWord.IsNullOrEmpty())
+            catch (Exception ex)
             {
-                query = query.Where(record => record.ProductCatogory.CategoryName.ToLower().Contains(KeyWord.ToLower())
-                        || record.Product_Name.ToLower().Contains(KeyWord.ToLower()));
+                Console.WriteLine($"Error: {ex}");
+                throw;
             }
-            var data = query.Select(item => new DataResponse_Product
-            {
-                metaProduct = item.Meta_Product,
-                productID = item.ID,
-                categoryID = item.ProductCatogoryID,
-                username = item.Account != null ? item.Account.User_Name : null,
-                product_Name = item.Product_Name,
-                productDescription = item.Product_Description,
-                isNew = item.Is_New,
-                quantity = item.Quantity,
-                price = item.Price,
-                sale = item.Sale,
-                priceSale = item.Price_Sale,
-                evaluate = item.Evaluate,
-                imageProduct = imageURL(item.ImageProduct.ToList())
-            });
-            pagination.TotalCount = query.Count();
-            var result = PageResult<DataResponse_Product>.ToPageResult(pagination, data);
-            return new PageResult<DataResponse_Product>(pagination, result);
-        }
-
-        public IEnumerable<DataResponse_Product> GetAllSale()
-        {
-            var query = _baseRepositoryProduct.GetQueryable(record => record.Deleted == false);
-            query = query.Where(record => record.Sale == true);
-            var Data = query.Select(item => new DataResponse_Product
-            {
-                metaProduct = item.Meta_Product,
-                productID = item.ID,
-                categoryID = item.ProductCatogoryID,
-                username = item.Account != null ? item.Account.User_Name : null,
-                product_Name = item.Product_Name,
-                productDescription = item.Product_Description,
-                isNew = item.Is_New,
-                quantity = item.Quantity,
-                price = item.Price,
-                sale = item.Sale,
-                priceSale = item.Price_Sale,
-                evaluate = item.Evaluate,
-                imageProduct = imageURL(item.ImageProduct.ToList())
-            }).AsEnumerable();
-            return Data;
         }
         public IEnumerable<DataResponse_Product> GetByMeta(string meta)
         {
@@ -189,42 +143,16 @@ namespace QLBH.Business
             return Data;
         }
 
-        public PageResult<DataResponse_Product> GetByAccount(Pagination pagination, string KeyWord, long IDAccount)
+        public PageResult<DataResponse_Product> GetAll(Pagination pagination, string keyWord, long accountID = 0, long categoryID = 0, bool sale = false)
         {
-            var query = _baseRepositoryProduct.GetQueryable(record => record.AccountID == IDAccount && record.Deleted == false);
-            if (!KeyWord.IsNullOrEmpty())
+            var query = _baseRepositoryProduct.GetQueryable(record => record.Deleted == false);
+            if (sale) query = query.Where(record => record.Sale == sale);
+            if (accountID != 0) query = query.Where(record => record.AccountID == accountID);
+            if (categoryID != 0) query = query.Where(record => record.ProductCatogoryID == categoryID);
+            if (!keyWord.IsNullOrEmpty())
             {
-                query = query.Where(record => record.ProductCatogory.CategoryName.ToLower().Contains(KeyWord.ToLower())
-                        || record.Product_Name.ToLower().Contains(KeyWord.ToLower()));
-            }
-            var data = query.Select(item => new DataResponse_Product
-            {
-                metaProduct = item.Meta_Product,
-                productID = item.ID,
-                categoryID = item.ProductCatogoryID,
-                username = item.Account != null ? item.Account.User_Name : null,
-                product_Name = item.Product_Name,
-                productDescription = item.Product_Description,
-                isNew = item.Is_New,
-                quantity = item.Quantity,
-                price = item.Price,
-                sale = item.Sale,
-                priceSale = item.Price_Sale,
-                evaluate = item.Evaluate,
-                imageProduct = imageURL(item.ImageProduct.ToList())
-            });
-            pagination.TotalCount = query.Count();
-            var result = PageResult<DataResponse_Product>.ToPageResult(pagination, data);
-            return new PageResult<DataResponse_Product>(pagination, result);
-        }
-
-        public PageResult<DataResponse_Product> GetByCategory(Pagination pagination, string KeyWord, long IDCategory)
-        {
-            var query = _baseRepositoryProduct.GetQueryable(record => record.ProductCatogoryID == IDCategory && record.Deleted == false);
-            if (!KeyWord.IsNullOrEmpty())
-            {
-                query = query.Where(record => record.ProductCatogory.CategoryName.ToLower().Contains(KeyWord.ToLower())
-                        || record.Product_Name.ToLower().Contains(KeyWord.ToLower()));
+                query = query.Where(record => record.ProductCatogory.CategoryName.ToLower().Contains(keyWord.ToLower())
+                        || record.Product_Name.ToLower().Contains(keyWord.ToLower()));
             }
             var data = query.Select(item => new DataResponse_Product
             {

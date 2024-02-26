@@ -30,35 +30,61 @@ namespace QLBH.Business
 
         public async Task CreateAsync(long accountId, DataRequest_DetailProduct data)
         {
-            var query = _productRepository.GetQueryable(record => record.AccountID == accountId && record.ID == data.productID);
-            if (!query.Any())
+            try
             {
-                throw new NotImplementedException(Common_Constants.ErrorExists.EmptyList);
+                var query = _productRepository.GetQueryable(record => record.AccountID == accountId && record.ID == data.productID);
+                var queryDetails = _detailRepository.GetQueryable(record => record.ProductID == data.productID);
+                if (query.Any() && !queryDetails.Any())
+                {
+                    var item = new Details
+                    {
+                        Detail_Introduce = data.detail_Introduce,
+                        Introduce = data.introduce,
+                        ProductID = data.productID,
+                    };
+                    await _detailRepository.CreateAsync(item);
+                }
+                Console.WriteLine($"Error: ");
             }
-            if (_detailRepository.GetQueryable(record => record.ProductID == data.productID).Any())
+            catch (Exception ex)
             {
-                throw new NotImplementedException(Common_Constants.ErrorExists.AlreadyExist);
+                Console.WriteLine($"Error: {ex}");
+                throw;
             }
-            var item = new Details
-            {
-                Detail_Introduce = data.detail_Introduce,
-                Introduce = data.introduce,
-                ProductID = data.productID,
-            };
-            await _detailRepository.CreateAsync(item);
         }
 
-        public async Task Delete(long iD)
+        public Task Delete(long iD)
         {
-            await _detailRepository.DeleteAsync(iD);
+            throw null;
+        }
+        public async Task Delete(long accountID, long iD)
+        {
+            try
+            {
+                var entity = await _detailRepository.GetAsync(record => record.ID == iD && record.Product.AccountID == accountID);
+                await _detailRepository.DeleteAsync(entity.ID);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                throw;
+            }
         }
 
         public async Task Update(long accountId, DataRequest_DetailProduct data)
         {
-            var item = await _detailRepository.GetAsync(record => record.ProductID == data.productID);
-            item.Detail_Introduce = data.detail_Introduce;
-            item.Introduce = data.introduce;
-            await _detailRepository.UpdateAsync(item);
+            try
+            {
+                var item = await _detailRepository.GetAsync(record => record.ProductID == data.productID);
+                item.Detail_Introduce = data.detail_Introduce;
+                item.Introduce = data.introduce;
+                await _detailRepository.UpdateAsync(item);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                throw;
+            }
         }
     }
 }

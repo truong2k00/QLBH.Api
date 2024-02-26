@@ -11,6 +11,7 @@ namespace QLBH.Models
 {
     public class Request_Product
     {
+        public long accountID { get; set; }
         public string product_Name { get; set; }
         public string productDescription { get; set; }
         public long categoryID { get; set; }

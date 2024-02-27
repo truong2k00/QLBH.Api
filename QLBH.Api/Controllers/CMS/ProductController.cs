@@ -9,6 +9,7 @@ using QLBH.Models;
 using QLBH.Business;
 using static QLBH.Commons.Common_Constants;
 using QLBH.Api.Extensions;
+using System.Security.Permissions;
 
 namespace QLBH.Api.Controllers
 {
@@ -29,48 +30,34 @@ namespace QLBH.Api.Controllers
 
         [HttpPost("Create")]
         [Authorize]
-        public async Task<IActionResult> Create([FromForm] Request_Product product, [FromForm] RequestFiles files)
+        public async Task Create([FromForm] Request_Product product, [FromForm] RequestFiles files)
         {
             await _productServices.Create(product, files);
-            return Ok();
         }
         [HttpPut("Update")]
-        public async Task<IActionResult> Update([FromQuery] long ID, [FromBody] Request_Product product, [FromForm] RequestFiles Files)
+        public async Task Update([FromQuery] long ID, [FromBody] Request_Product product, [FromForm] RequestFiles Files)
         {
             await _productServices.Update(ID, product, Files);
-            return Ok();
         }
         [HttpGet("GetAll-Product")]
-        public IActionResult GetAll([FromQuery] Request_Pagination pagination, [FromQuery] string keyWord)
+        public IActionResult GetAll([FromQuery] Request_Pagination pagination, [FromQuery] string keyWord, [FromQuery] long accountID = 0, [FromQuery] long categoryID = 0, [FromQuery] bool sale = false)
         {
             return Ok(_productServices.GetAll(new Pagination
             {
                 PageNumber = pagination.pageNumber,
                 PageSize = pagination.pageSize
-            }, keyWord));
+            }, keyWord, accountID, categoryID, sale));
         }
-        [HttpGet("GetAccountID/{accountID}")]
-        public IActionResult GetByIDAccount(long accountID, [FromQuery] Request_Pagination pagination, [FromQuery] string keyWord)
+        [HttpGet("GetAll")]
+        [Authorize(RoleKeyString.Superuser, RoleKeyString.Editor, RoleKeyString.Guest, RoleKeyString.Manager)]
+        public IActionResult GetAll([FromQuery] Request_Pagination pagination, [FromQuery] string keyWord, [FromQuery] long categoryID = 0, bool sale = false)
         {
-            return Ok(_productServices.GetByAccount(new Pagination
+            long accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
+            return Ok(_productServices.GetAll(new Pagination
             {
-                PageSize = pagination.pageSize,
-                PageNumber = pagination.pageNumber
-            }, keyWord, accountID));
-        }
-        [HttpGet("GetCategoryID/{CategoryID}")]
-        public IActionResult GetByIDCategory(long CategoryID, [FromQuery] Request_Pagination pagination, [FromQuery] string keyWord)
-        {
-            return Ok(_productServices.GetByCategory(new Pagination
-            {
-                PageSize = pagination.pageSize,
-                PageNumber = pagination.pageNumber
-            }, keyWord, CategoryID));
-        }
-        [HttpGet("GetAllSale")]
-        public IActionResult GetAll()
-        {
-            return Ok(_productServices.GetAllSale());
+                PageNumber = pagination.pageNumber,
+                PageSize = pagination.pageSize
+            }, keyWord, accountID, categoryID, sale));
         }
         [HttpGet("GetByMeta/{meta}")]
         public IActionResult GetByMeta(string meta)
@@ -79,29 +66,30 @@ namespace QLBH.Api.Controllers
         }
         //Detail product
         [HttpPost("Detail/Create")]
-        public async Task<IActionResult> Create([FromQuery] DataRequest_DetailProduct dataRequest_)
+        [Authorize(RoleKeyString.Admin, RoleKeyString.Moderator, RoleKeyString.Manager, RoleKeyString.Editor)]
+        public async Task Create([FromQuery] DataRequest_DetailProduct dataRequest_)
         {
             await _detailProductservices.Create(dataRequest_);
-            return Ok();
         }
         [HttpPut("Detail/Update/{iD}")]
-        public async Task<IActionResult> Update(long iD, [FromQuery] DataRequest_DetailProduct dataRequest_)
+        [Authorize(RoleKeyString.Admin, RoleKeyString.Moderator, RoleKeyString.Manager, RoleKeyString.Editor)]
+        public async Task Update(long iD, [FromQuery] DataRequest_DetailProduct dataRequest_)
         {
             await _detailProductservices.Update(iD, dataRequest_);
-            return Ok();
         }
         [HttpDelete("Detail/Delete/{iD}")]
-        public async Task<IActionResult> Delete(long iD)
+        [Authorize(RoleKeyString.Admin, RoleKeyString.Moderator, RoleKeyString.Manager, RoleKeyString.Editor)]
+        public async Task Delete(long iD)
         {
-            await _detailProductservices.Delete(iD);
-            return Ok();
+            await _detailProductservices.Delete(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), iD);
         }
         //image product
         [HttpPost("Image/Create")]
-        public async Task<IActionResult> Create([FromBody] Request_ImageProduct request_ImageProduct)
+        [Authorize(RoleKeyString.Admin, RoleKeyString.Moderator, RoleKeyString.Manager, RoleKeyString.Editor)]
+        public async Task Create([FromBody] Request_ImageProduct request_ImageProduct)
         {
+            request_ImageProduct.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             await _imageServices.Create(request_ImageProduct);
-            return Ok();
         }
         [HttpGet("Image/GetAll")]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Superuser)]

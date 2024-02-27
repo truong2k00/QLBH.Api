@@ -10,5 +10,6 @@ namespace QLBH.Business
     public interface IDetailProductServices : IReponsitory<DataRequest_DetailProduct, long>
     {
         Task CreateAsync(long accountId, DataRequest_DetailProduct data);
+        Task Delete(long accountID, long iD);
     }
 }

@@ -52,64 +52,58 @@ namespace QLBH.Api.Controllers
         }
 
 
-        [HttpGet("GetBill/{ID}")]
-        public async Task<IActionResult> GetByID(long ID)
+        [HttpGet("GetBill/{id}")]
+        public async Task<IActionResult> GetByID(long id)
         {
-            return Ok(await _billServices.GetByIDAsync(ID));
+            return Ok(await _billServices.GetByIDAsync(id));
         }
         #endregion
 
 
         [HttpPost("Create")]
         [Authorize(RoleKeyString.User, RoleKeyString.Guest, RoleKeyString.Superuser, RoleKeyString.Guest)]
-        public async Task<IActionResult> Create([FromQuery] DataRequest_Bill data)
+        public async Task Create([FromQuery] DataRequest_Bill data)
         {
             data.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             await _billServices.Create(data);
-            return Ok();
         }
 
 
-        [HttpPut("Update/{ID}")]
-        public async Task<IActionResult> Update(long ID)
+        [HttpPut("Update/{id}")]
+        public async Task Update(long id)
         {
-            await _billServices.Update(ID);
-            return Ok();
+            await _billServices.Update(id);
         }
 
 
-        [HttpDelete("Delete/{ID}")]
-        public async Task<IActionResult> Delete(long ID)
+        [HttpDelete("Delete/{id}")]
+        public async Task Delete(long id)
         {
-            await _billServices.Delete(ID);
-            return Ok();
+            await _billServices.Delete(id);
         }
 
 
         [HttpDelete("InvoiceDelete/{invoiceId}")]
-        public async Task<IActionResult> DeleteInvoice(long invoiceId)
+        public async Task DeleteInvoice(long invoiceId)
         {
             await _billServices.DeleteInvoice(invoiceId);
-            return Ok();
         }
 
 
         //Invoice Bill
-        [HttpPut("InvoiceUpdate/{ID}")]
+        [HttpPut("InvoiceUpdate/{id}")]
         [Authorize]
-        public async Task<IActionResult> Update(long ID, [FromQuery] DataRequest_InvoidDetails dataRequest_)
+        public async Task Update(long id, [FromQuery] DataRequest_InvoidDetails dataRequest_)
         {
-            await _invoiceServices.Update(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), ID, dataRequest_);
-            return Ok();
+            await _invoiceServices.Update(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), id, dataRequest_);
         }
 
 
-        [HttpPut("Admin/InvoiceUpdate/{ID}")]
+        [HttpPut("Admin/InvoiceUpdate/{id}")]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Manager)]
-        public async Task<IActionResult> UpdateAsync(long ID, [FromQuery] DataRequest_InvoidDetails dataRequest_)
+        public async Task UpdateAsync(long id, [FromQuery] DataRequest_InvoidDetails dataRequest_)
         {
-            await _invoiceServices.Update(0, ID, dataRequest_);
-            return Ok();
+            await _invoiceServices.Update(0, id, dataRequest_);
         }
     }
 }

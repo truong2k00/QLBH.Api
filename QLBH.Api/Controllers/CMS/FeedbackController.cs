@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QLBH.Business;
 using QLBH.Models;
+using System.Net.Security;
 using static QLBH.Commons.Common_Constants;
 
 namespace QLBH.Api.Controllers
@@ -19,22 +20,29 @@ namespace QLBH.Api.Controllers
             _feedbackServices = feedbackServices;
         }
         [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] Request_Feedback feedback)
+        [Authorize]
+        public async Task Create([FromBody] Request_Feedback feedback)
         {
+            feedback.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             await _feedbackServices.Create(feedback);
-            return Ok();
         }
         [HttpPut("Update/{AddressID}")]
-        public async Task<IActionResult> Update(long AddressID,[FromBody] Request_Feedback feedback)
+        [Authorize]
+        public async Task Update(long AddressID, [FromBody] Request_Feedback feedback)
         {
+            feedback.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             await _feedbackServices.Update(AddressID, feedback);
-            return Ok();
         }
         [HttpDelete("Delete/{AddressID}")]
-        public async Task<IActionResult> Delete(long AddressID)
+        [Authorize(RoleKeyString.Admin)]
+        public async Task Delete(long AddressID)
         {
             await _feedbackServices.Delete(AddressID);
-            return Ok();
+        }
+        [HttpGet("Get")]
+        public IActionResult Get([FromQuery] long acountId = 0, [FromQuery] long productID = 0)
+        {
+            return Ok(_feedbackServices.GetAll(acountId, productID));
         }
     }
 }

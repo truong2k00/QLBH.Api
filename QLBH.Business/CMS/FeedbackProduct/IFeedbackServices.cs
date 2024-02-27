@@ -9,6 +9,6 @@ namespace QLBH.Business
 {
     public interface IFeedbackServices<TEntity> : IReponsitory<Request_Feedback, long>
     {
-        IEnumerable<TEntity> Get(long accountId = 0, long productId = 0);
+        IEnumerable<TEntity> GetAll(long accountId = 0, long productId = 0);
     }
 }

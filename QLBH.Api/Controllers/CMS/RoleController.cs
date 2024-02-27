@@ -34,6 +34,7 @@ namespace QLBH.Api.Controllers
         }
         //Decentralization Services
         [HttpPost("Decentralization/Create")]
+        [Authorize(RoleKeyString.Admin)]
         public async Task<IActionResult> Create([FromQuery] DataRequest_Decenlization dataRequest_)
         {
             await _decentralizationServices.Create(dataRequest_);

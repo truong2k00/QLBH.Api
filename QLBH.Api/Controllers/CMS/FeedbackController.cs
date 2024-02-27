@@ -42,7 +42,7 @@ namespace QLBH.Api.Controllers
         [HttpGet("Get")]
         public IActionResult Get([FromQuery] long acountId = 0, [FromQuery] long productID = 0)
         {
-            return Ok(_feedbackServices.Get(acountId, productID));
+            return Ok(_feedbackServices.GetAll(acountId, productID));
         }
     }
 }

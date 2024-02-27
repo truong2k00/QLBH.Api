@@ -1,4 +1,5 @@
 ﻿using QLBH.Models;
+using QLBH.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;

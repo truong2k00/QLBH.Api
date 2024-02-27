@@ -22,26 +22,23 @@ namespace QLBH.Api.Controllers
         }
         [HttpPost("Create")]
         [Authorize]
-        public async Task<IActionResult> Create([FromBody] Request_AddressReceive request_AddessReceive)
+        public async Task Create([FromBody] Request_AddressReceive request_AddessReceive)
         {
             request_AddessReceive.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             await _addessReceive.Create(request_AddessReceive);
-            return Ok();
         }
         [HttpPost("Update/{AddressReceiveID}")]
         [Authorize]
-        public async Task<IActionResult> UpdateAsync(long AddressReceiveID, [FromBody] Request_AddressReceive request_AddressReceive)
+        public async Task UpdateAsync(long addressReceiveID, [FromBody] Request_AddressReceive request_AddressReceive)
         {
             request_AddressReceive.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
-            await _addessReceive.Update(AddressReceiveID, request_AddressReceive);
-            return Ok();
+            await _addessReceive.Update(addressReceiveID, request_AddressReceive);
         }
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{addressReceiveID}")]
         [Authorize]
-        public async Task<IActionResult> DeleteAsync([FromBody] long AddressReceiveID)
+        public async Task DeleteAsync(long addressReceiveID)
         {
-            await _addessReceive.Delete(AddressReceiveID);
-            return Ok();
+            await _addessReceive.Delete(addressReceiveID);
         }
         [HttpGet("GetAll")]
         [Authorize(Roles = RoleKeyString.Admin)]

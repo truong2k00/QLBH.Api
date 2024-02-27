@@ -41,12 +41,14 @@ namespace QLBH.Business
             , IBaseRepository<Role> baseRepositoryRole
             , IBaseRepository<MailSetting> baseRepositoryMailsetting
             , IBaseRepository<Decentralization> baseRepositoryDece
-            , IBaseRepository<ConfirmEmail> baseRepositoryConfirm)
+            , IBaseRepository<ConfirmEmail> baseRepositoryConfirm
+            , IBaseRepository<RefeshToken> baseRepositoryRefesh)
         {
             _emailSender = emailSender;
             _responObject = responObject;
             _configuration = configuration;
 
+            _baseRepositoryRefesh = baseRepositoryRefesh;
             _baseRepositoryRole = baseRepositoryRole;
             _baseRepositoryConfirm = baseRepositoryConfirm;
             _baseDeRepositoryDece = baseRepositoryDece;

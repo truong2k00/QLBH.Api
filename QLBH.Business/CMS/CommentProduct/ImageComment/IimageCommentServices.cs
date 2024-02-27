@@ -12,6 +12,5 @@ namespace QLBH.Business
         Task Delete(Bind id);
         Task Update(string Username, Bind id, RequestFiles files);
         Task<TEntity> GetById(Bind id);
-        Task<object> GetById(object iDImage);
     }
 }

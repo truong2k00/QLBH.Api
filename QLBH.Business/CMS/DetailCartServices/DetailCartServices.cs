@@ -33,7 +33,6 @@ namespace QLBH.Business
 
             try
             {
-<<<<<<< Updated upstream
                 var dataproduct = await _productRepository.GetAsync(record => record.Meta_Product == meta);
                 var cart = await _cartRepository.GetAsync(record => record.AccountID == idUser);
                 cart.Detail_Cart = new List<Detail_Cart>
@@ -51,37 +50,8 @@ namespace QLBH.Business
             }
             catch (Exception ex)
             {
-                throw new Exception(Common_Constants.BaseOperation.create, ex);
-=======
-                var product = await _productRepository.GetAsync(record => record.Meta_Product == meta);
-                var cart = await _cartRepository.GetAsync(record => record.AccountID == idUser);
-                var query = _detailCartRepository.GetQueryable(record => record.CartID == cart.ID);
-                if (query.Any(record => record.ProductID == product.ID))
-                {
-                    var detail = query.Where(record => record.ProductID == product.ID).FirstOrDefault();
-                    detail.Quantity += 1;
-                    detail.Price = product.Price;
-                    detail.Cash = detail.Quantity * detail.Price;
-                    await _detailCartRepository.UpdateAsync(detail);
-                }
-                else
-                {
-                    var detail = new Detail_Cart
-                    {
-                        CartID = cart.ID,
-                        ProductID = product.ID,
-                        Quantity = 1,
-                        Price = product.Sale ? (product.Price * product.Price_Sale) : product.Price,
-                        Cash = product.Sale ? (product.Price * product.Price_Sale) : product.Price
-                    };
-                    await _detailCartRepository.CreateAsync(detail);
-                }
-            }
-            catch (Exception ex)
-            {
                 Console.WriteLine($"Error: {ex}");
                 throw;
->>>>>>> Stashed changes
             }
         }
 
@@ -97,7 +67,6 @@ namespace QLBH.Business
                     ProductID = data.productID,
                     Quantity = data.quantity,
                     Price = product.Price,
-<<<<<<< Updated upstream
                     TotalPrice = (decimal)data.quantity * product.Price,
                 };
                 await _detailCartRepository.CreateAsync(entity);
@@ -105,17 +74,8 @@ namespace QLBH.Business
             }
             catch (Exception ex)
             {
-                throw new Exception(Common_Constants.BaseOperation.create, ex);
-=======
-                    Cash = (decimal)data.quantity * product.Price,
-                };
-                await _detailCartRepository.CreateAsync(entity);
-            }
-            catch (Exception ex)
-            {
                 Console.WriteLine($"Error: {ex}");
                 throw;
->>>>>>> Stashed changes
             }
         }
         private static List<Respon_ImageProduct> imageURL(List<ImageProduct> images)
@@ -156,24 +116,15 @@ namespace QLBH.Business
                     var priceproduct = product.Sale == false ? product.Price : product.Price * product.Price_Sale;
                     detail.ProductID = data.productID;
                     detail.Quantity = data.quantity;
-<<<<<<< Updated upstream
-                    detail.Price = priceproduct;
-                    detail.TotalPrice = (decimal)data.quantity * priceproduct;
-=======
                     detail.Price = product.Price;
-                    detail.Cash = (decimal)data.quantity * priceproduct;
->>>>>>> Stashed changes
+                    detail.TotalPrice = (decimal)data.quantity * priceproduct;
                     await _detailCartRepository.UpdateAsync(detail);
                 }
             }
             catch (Exception ex)
             {
-<<<<<<< Updated upstream
-                throw new Exception(Common_Constants.BaseOperation.create, ex);
-=======
                 Console.WriteLine($"Error: {ex}");
                 throw;
->>>>>>> Stashed changes
             }
         }
 

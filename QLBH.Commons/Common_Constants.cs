@@ -135,16 +135,6 @@ namespace QLBH.Commons
         }
         public class BaseOperation
         {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> UpdateAddressServices
-=======
->>>>>>> UpdateBillServices
-=======
->>>>>>> UpdateCartServices
             public const string create = "Cannot Create new";
             public const string delete = "Cannot Delete";
             public const string update = "Cannot Update";

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 using Microsoft.VisualStudio.Services.Identity;
+using QLBH.Commons;
 using QLBH.Models;
 using QLBH.Models.Entities;
 using QLBH.Repository;
@@ -27,11 +28,15 @@ namespace QLBH.Business
             _cartRepository = cartRepository;
         }
 
-        public async Task<bool> AddCart(long idUser, string meta)
+        public async Task AddCart(long idUser, string meta)
         {
-            var dataproduct = await _productRepository.GetAsync(record => record.Meta_Product == meta);
-            var cart = await _cartRepository.GetAsync(record => record.AccountID == idUser);
-            cart.Detail_Cart = new List<Detail_Cart>
+
+            try
+            {
+<<<<<<< Updated upstream
+                var dataproduct = await _productRepository.GetAsync(record => record.Meta_Product == meta);
+                var cart = await _cartRepository.GetAsync(record => record.AccountID == idUser);
+                cart.Detail_Cart = new List<Detail_Cart>
             {
                 new Detail_Cart
                 {
@@ -39,34 +44,79 @@ namespace QLBH.Business
                     Product = dataproduct,
                     Price = dataproduct.Price,
                     Quantity = dataproduct.Quantity,
-                    Cash = (decimal)dataproduct.Price * dataproduct.Quantity,
+                    TotalPrice = (decimal)dataproduct.Price * dataproduct.Quantity,
                 }
             };
-            try
-            {
                 await _cartRepository.UpdateAsync(cart);
-                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                throw new Exception(Common_Constants.BaseOperation.create, ex);
+=======
+                var product = await _productRepository.GetAsync(record => record.Meta_Product == meta);
+                var cart = await _cartRepository.GetAsync(record => record.AccountID == idUser);
+                var query = _detailCartRepository.GetQueryable(record => record.CartID == cart.ID);
+                if (query.Any(record => record.ProductID == product.ID))
+                {
+                    var detail = query.Where(record => record.ProductID == product.ID).FirstOrDefault();
+                    detail.Quantity += 1;
+                    detail.Price = product.Price;
+                    detail.Cash = detail.Quantity * detail.Price;
+                    await _detailCartRepository.UpdateAsync(detail);
+                }
+                else
+                {
+                    var detail = new Detail_Cart
+                    {
+                        CartID = cart.ID,
+                        ProductID = product.ID,
+                        Quantity = 1,
+                        Price = product.Sale ? (product.Price * product.Price_Sale) : product.Price,
+                        Cash = product.Sale ? (product.Price * product.Price_Sale) : product.Price
+                    };
+                    await _detailCartRepository.CreateAsync(detail);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                throw;
+>>>>>>> Stashed changes
             }
         }
 
         public async Task Create(DataRequest_DetailCart data)
         {
-            var Cart = await _cartRepository.GetAsync(record => record.AccountID == data.accountID);
-            var product = await _productRepository.GetByIDAsync(data.productID);
-            var entity = new Detail_Cart
+            try
             {
-                Cart = Cart,
-                ProductID = data.productID,
-                Quantity = data.quantity,
-                Price = product.Price,
-                Cash = (decimal)data.quantity * product.Price,
-            };
-            await _detailCartRepository.CreateAsync(entity);
-            var dataproduct = _productRepository.GetQueryable(record => record.ID == data.productID);
+                var Cart = await _cartRepository.GetAsync(record => record.AccountID == data.accountID);
+                var product = await _productRepository.GetByIDAsync(data.productID);
+                var entity = new Detail_Cart
+                {
+                    Cart = Cart,
+                    ProductID = data.productID,
+                    Quantity = data.quantity,
+                    Price = product.Price,
+<<<<<<< Updated upstream
+                    TotalPrice = (decimal)data.quantity * product.Price,
+                };
+                await _detailCartRepository.CreateAsync(entity);
+                var dataproduct = _productRepository.GetQueryable(record => record.ID == data.productID);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(Common_Constants.BaseOperation.create, ex);
+=======
+                    Cash = (decimal)data.quantity * product.Price,
+                };
+                await _detailCartRepository.CreateAsync(entity);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+                throw;
+>>>>>>> Stashed changes
+            }
         }
         private static List<Respon_ImageProduct> imageURL(List<ImageProduct> images)
         {
@@ -83,42 +133,66 @@ namespace QLBH.Business
         }
         public async Task Delete(long ID)
         {
-            await _detailCartRepository.DeleteAsync(ID);
+            try
+            {
+                await _detailCartRepository.DeleteAsync(ID);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(Common_Constants.BaseOperation.delete, ex);
+            }
         }
 
         public async Task Update(long ID, DataRequest_DetailCart data)
         {
-            var Cart = await _cartRepository.GetAsync(record => record.AccountID == data.accountID);
-            var detail = await _detailCartRepository.GetAsync(record => record.CartID == Cart.ID);
-
-            if (detail != null)
+            try
             {
-                var product = await _productRepository.GetAsync(record => record.ID == data.productID);
-                var priceproduct = product.Sale == false ? product.Price : product.Price * product.Price_Sale;
-                detail.ProductID = data.productID;
-                detail.Quantity = data.quantity;
-                detail.Price = priceproduct;
-                detail.Cash = (decimal)data.quantity * priceproduct;
-                await _detailCartRepository.UpdateAsync(detail);
+                var Cart = await _cartRepository.GetAsync(record => record.AccountID == data.accountID);
+                var detail = await _detailCartRepository.GetAsync(record => record.CartID == Cart.ID);
+
+                if (detail != null)
+                {
+                    var product = await _productRepository.GetAsync(record => record.ID == data.productID);
+                    var priceproduct = product.Sale == false ? product.Price : product.Price * product.Price_Sale;
+                    detail.ProductID = data.productID;
+                    detail.Quantity = data.quantity;
+<<<<<<< Updated upstream
+                    detail.Price = priceproduct;
+                    detail.TotalPrice = (decimal)data.quantity * priceproduct;
+=======
+                    detail.Price = product.Price;
+                    detail.Cash = (decimal)data.quantity * priceproduct;
+>>>>>>> Stashed changes
+                    await _detailCartRepository.UpdateAsync(detail);
+                }
+            }
+            catch (Exception ex)
+            {
+<<<<<<< Updated upstream
+                throw new Exception(Common_Constants.BaseOperation.create, ex);
+=======
+                Console.WriteLine($"Error: {ex}");
+                throw;
+>>>>>>> Stashed changes
             }
         }
 
-        public async Task<IEnumerable<DataResponse_DetailCart>> GetByAccount(long idUser)
+        public IEnumerable<DataResponse_DetailCart> GetByAccount(long accountID)
         {
-            var DataCart = await _cartRepository.GetAsync(record => record.AccountID == idUser);
-            var Data = await _detailCartRepository.GetAllAsync(record => record.CartID == DataCart.ID);
-            return Data.Select(item => new DataResponse_DetailCart
+            var query = _detailCartRepository.GetQueryable(record => record.Cart.AccountID == accountID);
+            return query.Select(item => new DataResponse_DetailCart
             {
                 cartID = item.CartID,
-                productID = (long)item.ProductID,
+                productID = item.ProductID,
                 quantity = item.Quantity,
                 price = item.Price,
+                totalPrice = item.TotalPrice,
                 dataResponseProduct = ByIDProduct(item.ProductID),
             });
         }
-        public IEnumerable<DataResponse_Product> ByIDProduct(long? IDproduct)
+        public IEnumerable<DataResponse_Product> ByIDProduct(long? productID)
         {
-            var Data = _productRepository.GetQueryable(record => record.ID == IDproduct);
+            var Data = _productRepository.GetQueryable(record => record.ID == productID);
             return Data.Select(item => new DataResponse_Product
             {
                 metaProduct = item.Meta_Product,

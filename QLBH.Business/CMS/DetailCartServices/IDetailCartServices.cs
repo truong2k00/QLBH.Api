@@ -9,7 +9,11 @@ namespace QLBH.Business
 {
     public interface IDetailCartServices : IReponsitory<DataRequest_DetailCart, long>
     {
-        Task<bool> AddCart(long idUser, string meta);
+        Task AddCart(long idUser, string meta);
+<<<<<<< Updated upstream
+        IEnumerable<DataResponse_DetailCart> GetByAccount(long idUser);
+=======
         Task<IEnumerable<DataResponse_DetailCart>> GetByAccount(long idUser);
+>>>>>>> Stashed changes
     }
 }

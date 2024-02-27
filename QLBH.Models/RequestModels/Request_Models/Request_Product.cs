@@ -19,6 +19,6 @@ namespace QLBH.Models
         public bool sale { get; set; }
         public long quantity { get; set; }
         public long price { get; set; }
-        public long priceSale { get; set; }
+        public decimal priceSale { get; set; }
     }
 }

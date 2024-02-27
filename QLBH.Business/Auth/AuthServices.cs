@@ -26,45 +26,28 @@ namespace QLBH.Business
     {
         private readonly EmailSender _emailSender;
         private readonly IConfiguration _configuration;
-        private readonly AppDbContext _appDbContext;
         private readonly IBaseRepository<Account> _baseRepositoryAccount;
+        private readonly IBaseRepository<Role> _baseRepositoryRole;
         private readonly IBaseRepository<RefeshToken> _baseRepositoryRefesh;
         private readonly IBaseRepository<Decentralization> _baseDeRepositoryDece;
         private readonly IBaseRepository<MailSetting> _baseRepositoryMailsetting;
         private readonly IBaseRepository<ConfirmEmail> _baseRepositoryConfirm;
         private readonly ResponcesObject<DataResponseToken> _responObject;
 
-        public EmailSender EmailSender => _emailSender;
-
-        public IConfiguration Configuration => _configuration;
-
-        public AppDbContext AppDbContext => _appDbContext;
-
-        public IBaseRepository<Account> BaseRepositoryAccount => _baseRepositoryAccount;
-
-        public IBaseRepository<RefeshToken> BaseRepositoryRefesh => _baseRepositoryRefesh;
-
-        public IBaseRepository<Decentralization> BaseDeRepositoryDece => _baseDeRepositoryDece;
-
-        public IBaseRepository<MailSetting> BaseRepositoryMailsetting => _baseRepositoryMailsetting;
-
-        public IBaseRepository<ConfirmEmail> BaseRepositoryConfirm => _baseRepositoryConfirm;
-
-        public ResponcesObject<DataResponseToken> ResponObject => _responObject;
-
         public AuthServices(EmailSender emailSender
-            , AppDbContext appDbContext, IConfiguration configuration
+            , IConfiguration configuration
             , ResponcesObject<DataResponseToken> responObject
             , IBaseRepository<Account> baseRepositoryAccount
+            , IBaseRepository<Role> baseRepositoryRole
             , IBaseRepository<MailSetting> baseRepositoryMailsetting
             , IBaseRepository<Decentralization> baseRepositoryDece
             , IBaseRepository<ConfirmEmail> baseRepositoryConfirm)
         {
             _emailSender = emailSender;
             _responObject = responObject;
-            _appDbContext = appDbContext;
             _configuration = configuration;
 
+            _baseRepositoryRole = baseRepositoryRole;
             _baseRepositoryConfirm = baseRepositoryConfirm;
             _baseDeRepositoryDece = baseRepositoryDece;
             _baseRepositoryAccount = baseRepositoryAccount;
@@ -74,11 +57,11 @@ namespace QLBH.Business
         public async Task<DataResponseToken> GenenrateRquestToken(Account Account)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var secretKeyBytes = Encoding.UTF8.GetBytes(Configuration.GetSection(AppSettingKeys.AUTH_SECRET).Value);
-            var RoleID = (await BaseDeRepositoryDece.GetAllAsync(record => record.AccountID == Account.ID && record.Deleted == false))
-                .Select(record => (long)record.RoleID);
+            var secretKeyBytes = Encoding.UTF8.GetBytes(_configuration.GetSection(AppSettingKeys.AUTH_SECRET).Value);
+            var RoleID = (await _baseDeRepositoryDece.GetAllAsync(record => record.AccountID == Account.ID && record.Deleted == false))
+                .Select(record => (long)record.role);
 
-            var roleName = string.Join(";", AppDbContext.Role.Where(record => RoleID.Contains(record.Role_ID)).Select(x => x.Role_Name));
+            var roleName = string.Join(";", _baseRepositoryRole.GetQueryable(record => RoleID.Contains(record.Role_ID)).Select(x => x.Role_Name));
 
             var tokenDes = new SecurityTokenDescriptor
             {
@@ -106,7 +89,7 @@ namespace QLBH.Business
         }
         public async Task Validate(string User, string Email)
         {
-            var account = await BaseRepositoryAccount.GetAllAsync(record => record.User_Name.ToLower() == User.ToLower() || record.Email.ToLower() == Email.ToLower() && record.Deleted == false);
+            var account = await _baseRepositoryAccount.GetAllAsync(record => record.User_Name.ToLower() == User.ToLower() || record.Email.ToLower() == Email.ToLower() && record.Deleted == false);
             if (account.Count() > 0)
             {
                 throw new Exception();
@@ -126,7 +109,7 @@ namespace QLBH.Business
                 }
             };
             account.RefeshToken = refeshTokens;
-            await BaseRepositoryAccount.UpdateAsync(account);
+            await _baseRepositoryAccount.UpdateAsync(account);
         }
         public string GenerateRefreshToken()
         {
@@ -140,24 +123,24 @@ namespace QLBH.Business
 
         public IEnumerable<Account> GetAccounts()
         {
-            return AppDbContext.Account.AsQueryable();
+            return _baseRepositoryAccount.GetQueryable();
         }
 
         public async Task<ResponcesObject<DataResponseToken>> Login(Request_Login request_Login)
         {
             if (request_Login.userName.IsNullOrEmpty() || request_Login.password.IsNullOrEmpty())
-                return ResponObject.ResponcesError(StatusCodes.Status400BadRequest, ErrorLogin.Request_NULL, null);
+                return _responObject.ResponcesError(StatusCodes.Status400BadRequest, ErrorLogin.Request_NULL, null);
 
-            if (AppDbContext.Account.Any(x => x.User_Name == request_Login.userName || x.Email == request_Login.userName && x.Deleted == false))
+            if (_baseRepositoryAccount.GetQueryable(record => record.User_Name == request_Login.userName || record.Email == request_Login.userName && record.Deleted == false).Any())
             {
-                var account = await BaseRepositoryAccount.GetAsync(x => x.User_Name == request_Login.userName || x.Email == request_Login.userName && x.Deleted == false);
+                var account = await _baseRepositoryAccount.GetAsync(x => x.User_Name == request_Login.userName || x.Email == request_Login.userName && x.Deleted == false);
                 bool CheckPass = BCryptNet.Verify(request_Login.password, account.PassWord);
                 if (!CheckPass)
-                    return ResponObject.ResponcesError(StatusCodes.Status400BadRequest, ErrorLogin.Error_Pass, null);
+                    return _responObject.ResponcesError(StatusCodes.Status400BadRequest, ErrorLogin.Error_Pass, null);
                 var acc = await GenenrateRquestToken(account);
-                return ResponObject.ResponcesSuccess(SUCCESS, acc);
+                return _responObject.ResponcesSuccess(SUCCESS, acc);
             }
-            return ResponObject.ResponcesError(StatusCodes.Status400BadRequest, ErrorLogin.Error_USER_NAME, null);
+            return _responObject.ResponcesError(StatusCodes.Status400BadRequest, ErrorLogin.Error_USER_NAME, null);
         }
         public List<Cart> GenerateCart()
         {
@@ -168,7 +151,7 @@ namespace QLBH.Business
         }
         public async Task<Tuple<int, string>> Register(Request_Register request_Register)
         {
-            var accounts = await BaseRepositoryAccount.GetAllAsync(record => record.IsConfirm < DateTime.Now && record.Deleted == false && record.Work == false);
+            var accounts = await _baseRepositoryAccount.GetAllAsync(record => record.IsConfirm < DateTime.Now && record.Deleted == false && record.Work == false);
 
             if (accounts.Count() != 0)
             {
@@ -176,7 +159,7 @@ namespace QLBH.Business
                 {
                     item.Deleted = true;
                 }
-                await BaseRepositoryAccount.UpdateAsync(accounts);
+                await _baseRepositoryAccount.UpdateAsync(accounts);
             }
             await Validate(request_Register.userName, request_Register.email);
 
@@ -193,12 +176,12 @@ namespace QLBH.Business
             if (!IsValidateEmail(request_Register.email))
                 return Tuple.Create(StatusCodes.Status402PaymentRequired, ErrorRegister.Error_Email_TYPE);
             //Phone account Checked
-            if (AppDbContext.Account.Any(x => x.Phone_Number == request_Register.phone_Number && x.Deleted == false))
+            if (_baseRepositoryAccount.GetQueryable(record => record.Phone_Number == request_Register.phone_Number && record.Deleted == false).Any())
                 return Tuple.Create(StatusCodes.Status402PaymentRequired, ErrorRegister.Phone_ERROR);
             else
             {
                 var account = await GenerateAccount(request_Register);
-                await BaseRepositoryAccount.CreateAsync(account);
+                await _baseRepositoryAccount.CreateAsync(account);
 
                 await SenderEmail(account);
 
@@ -207,14 +190,14 @@ namespace QLBH.Business
         }
         public async Task SenderEmail(Account account)
         {
-            var confirm = await BaseRepositoryConfirm.GetAsync(record => record.Account.ID == account.ID && record.IsConfirmed == false);
-            var mailsetting = await BaseRepositoryMailsetting.GetAsync(record => record.ID == confirm.MailSetting.ID);
+            var confirm = await _baseRepositoryConfirm.GetAsync(record => record.Account.ID == account.ID && record.IsConfirmed == false);
+            var mailsetting = await _baseRepositoryMailsetting.GetAsync(record => record.ID == confirm.MailSetting.ID);
 
-            await EmailSender.SendEmailAsync(account.Email, mailsetting.TieuDe + "(" + mailsetting.Title + ")", string.Format(mailsetting.NoiDung, confirm.CodeiVerification) + string.Format(mailsetting.Description, confirm.CodeiVerification));
+            await _emailSender.SendEmailAsync(account.Email, mailsetting.TieuDe + "(" + mailsetting.Title + ")", string.Format(mailsetting.NoiDung, confirm.CodeiVerification) + string.Format(mailsetting.Description, confirm.CodeiVerification));
         }
         public async Task<Account> GenerateAccount(Request_Register request_Register)
         {
-            MailSetting mailSetting = await BaseRepositoryMailsetting.GetAsync(reocrd => reocrd.Code == EmailCode.XacThucDangKy);
+            MailSetting mailSetting = await _baseRepositoryMailsetting.GetAsync(reocrd => reocrd.Code == EmailCode.XacThucDangKy);
             return new Account
             {
                 Date_Create = DateTime.Now,
@@ -244,7 +227,7 @@ namespace QLBH.Business
         //}
         public async Task<DataResponseToken> RenewToken(string token)
         {
-            var refeshtoken = await BaseRepositoryRefesh.GetAsync(x => x.Token == token && x.Date_Expired >= DateTime.Now);
+            var refeshtoken = await _baseRepositoryRefesh.GetAsync(x => x.Token == token && x.Date_Expired >= DateTime.Now);
             if (refeshtoken == null)
                 return new DataResponseToken()
                 {
@@ -253,15 +236,15 @@ namespace QLBH.Business
                 };
             else
             {
-                var Account = await BaseRepositoryAccount.GetAsync(x => x.ID == refeshtoken.Account.ID);
+                var Account = await _baseRepositoryAccount.GetAsync(x => x.ID == refeshtoken.Account.ID);
                 return await GenenrateRquestToken(Account);
             }
         }
 
         public async Task<DataResponCode> ConfirmCode(string userName, string code)
         {
-            var account = await BaseRepositoryAccount.GetAsync(record => record.User_Name == userName && record.Deleted == false);
-            var Confirm = await BaseRepositoryConfirm.GetAsync(record => record.Account.ID == account.ID && record.IsConfirmed == false && record.Expired >= DateTime.Now && record.Deleted == false);
+            var account = await _baseRepositoryAccount.GetAsync(record => record.User_Name == userName && record.Deleted == false);
+            var Confirm = await _baseRepositoryConfirm.GetAsync(record => record.Account.ID == account.ID && record.IsConfirmed == false && record.Expired >= DateTime.Now && record.Deleted == false);
             if (Confirm == null) return new DataResponCode { status = StatusCodes.Status404NotFound, message = CodeVerification.Message_404_code };
             else
             {
@@ -269,8 +252,8 @@ namespace QLBH.Business
                 {
                     account.Work = true;
                     Confirm.IsConfirmed = true;
-                    await BaseRepositoryAccount.UpdateAsync(account);
-                    await BaseRepositoryConfirm.UpdateAsync(Confirm);
+                    await _baseRepositoryAccount.UpdateAsync(account);
+                    await _baseRepositoryConfirm.UpdateAsync(Confirm);
                     return new DataResponCode
                     {
                         status = StatusCodes.Status200OK,
@@ -289,19 +272,19 @@ namespace QLBH.Business
         }
         public async Task<DataResponCode> Create_Code(string UserName)
         {
-            var mailSetting = await BaseRepositoryMailsetting.GetAsync(record => record.Code == EmailCode.XacThucDangKy);
-            var account = await BaseRepositoryAccount.GetAsync(record => record.User_Name == UserName && record.Deleted == false);
-            var confirm = AppDbContext.ConfirmEmail.Where(record => record.Account.ID == account.ID);
+            var mailSetting = await _baseRepositoryMailsetting.GetAsync(record => record.Code == EmailCode.XacThucDangKy);
+            var account = await _baseRepositoryAccount.GetAsync(record => record.User_Name == UserName && record.Deleted == false);
+            var confirm = _baseRepositoryConfirm.GetQueryable(record => record.Account.ID == account.ID);
             if (confirm != null)
             {
                 foreach (var item in confirm)
                 {
                     item.Deleted = true;
                 }
-                await BaseRepositoryConfirm.UpdateAsync(confirm);
+                await _baseRepositoryConfirm.UpdateAsync(confirm);
             }
             account.ConfirmEmail = MailSeeding.NewConfirmEmail(mailSetting, null);
-            AppDbContext.SaveChanges();
+            await _baseRepositoryAccount.UpdateAsync(account);
             if (account == null) return new DataResponCode
             {
                 status = StatusCodes.Status404NotFound,

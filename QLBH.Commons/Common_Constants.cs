@@ -14,9 +14,9 @@ namespace QLBH.Commons
         public const string NameSystem = "Quản Lý Bán Hàng";
         public const string Email = "aptruong6@gmail.com";
         public const string Hotline = "0981086913";
+        public const string DEFAULT_CONTROLER_RAUTER = "api/[controller]/[action]";
         public class AppSettingKeys
         {
-            public const string DEFAULT_CONTROLER_RAUTER = "api/[controller]";
             public const string AUTH_SECRET = "AppSettings:Secretkey";
             public const string AppSettingGmail = "AppSettings:GmailAccount:Gmail";
             public const string AppSettingGmailPassword = "AppSettings:GmailAccount:PassWord";

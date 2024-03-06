@@ -7,7 +7,7 @@ using static QLBH.Commons.Common_Constants;
 
 namespace QLBH.Api.Controllers
 {
-    [Route(AppSettingKeys.DEFAULT_CONTROLER_RAUTER)]
+    [Route(DEFAULT_CONTROLER_RAUTER)]
     [ApiController]
     public class ConfirmEmailController : ControllerBase
     {
@@ -28,7 +28,8 @@ namespace QLBH.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Confirm(int Code)
         {
-            return Ok(await _confirmEmail.ConfirmEmail(HttpContext.User.FindFirst(Clames.USER).Value,Code));
+            var a = await _confirmEmail.ConfirmEmail(HttpContext.User.FindFirst(Clames.USER).Value, Code);
+            return Ok(a);
         }
     }
 }

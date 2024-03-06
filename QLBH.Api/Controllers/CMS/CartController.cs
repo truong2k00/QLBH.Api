@@ -9,7 +9,7 @@ using static QLBH.Commons.Common_Constants;
 
 namespace QLBH.Api.Controllers
 {
-    [Route(AppSettingKeys.DEFAULT_CONTROLER_RAUTER)]
+    [Route(DEFAULT_CONTROLER_RAUTER)]
     [ApiController]
     public class CartController : ControllerBase
     {
@@ -21,38 +21,42 @@ namespace QLBH.Api.Controllers
             _cartServices = cartServices;
             _detailCartServices = detailCartServices;
         }
-        [HttpGet("GetAllCart")]
-        public IActionResult GetByAccount()
+        [HttpGet()]
+        public IActionResult GetAll()
         {
             return Ok(_cartServices.GetAllCart());
         }
         // Detail cart
-        [HttpGet("Details/GetAccount")]
+        [HttpGet()]
         [Authorize(RoleKeyString.User)]
-        public IActionResult GetAll()
+        public IActionResult GetAllDetail()
         {
             return Ok(_detailCartServices.GetByAccount(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value)));
         }
-        [HttpPost("Details/Create")]
-        public async Task Create([FromQuery] DataRequest_DetailCart dataRequest_DetailCart)
+        [HttpPost()]
+        public async Task<IActionResult> CreateDetail([FromQuery] DataRequest_DetailCart dataRequest_DetailCart)
         {
             await _detailCartServices.Create(dataRequest_DetailCart);
+            return Ok();
         }
-        [HttpPost("Details/addCart/{meta}")]
+        [HttpPost("{meta}")]
         [Authorize]
-        public async Task AddCard(string meta)
+        public async Task<IActionResult> AddCard(string meta)
         {
             await _detailCartServices.AddCart(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), meta);
+            return Ok();
         }
-        [HttpPut("Details/Update/{id}")]
-        public async Task Update(long id, [FromQuery] DataRequest_DetailCart dataRequest_DetailCart)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateDetails(long id, [FromQuery] DataRequest_DetailCart dataRequest_DetailCart)
         {
             await _detailCartServices.Update(id, dataRequest_DetailCart);
+            return Ok();
         }
-        [HttpDelete("Details/Delete/{ID}")]
-        public async Task DetailDelete(long ID)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(long id)
         {
-            await _detailCartServices.Delete(ID);
+            await _detailCartServices.Delete(id);
+            return Ok();
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QLBH.Models
 {
-    public class DataResponse_InvoiceDetail : DataRequest_InvoidDetails
+    public class DataResponse_InvoiceDetail : DataRequest_InvoiceDetails
     {
         public long billId { get; set; }
     }

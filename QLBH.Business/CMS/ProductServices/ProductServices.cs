@@ -51,8 +51,8 @@ namespace QLBH.Business
                     Price_Sale = item.priceSale,
                     Evaluate = 5,
                     Deleted = false,
-                    ImageProduct = await GenerateImageProduct(username, files.files)
                 };
+                entity.ImageProduct = await GenerateImageProduct(username, files.files);
                 await _baseRepositoryProduct.CreateAsync(entity);
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace QLBH.Business
         }
         public async Task<List<ImageProduct>> GenerateImageProduct(string username, List<IFormFile> Files)
         {
-            if (Files.Any()) return null;
+            if (!Files.Any()) return null;
             var productImages = new List<ImageProduct>();
             foreach (var file in Files)
             {
@@ -143,12 +143,12 @@ namespace QLBH.Business
             return Data;
         }
 
-        public PageResult<DataResponse_Product> GetAll(Pagination pagination, string keyWord, long accountID = 0, long categoryID = 0, bool sale = false)
+        public PageResult<DataResponse_Product> GetAll(Pagination pagination, string keyWord, long accountID = 0, List<long> categoryIDs = null, bool sale = false)
         {
             var query = _baseRepositoryProduct.GetQueryable(record => record.Deleted == false);
             if (sale) query = query.Where(record => record.Sale == sale);
             if (accountID != 0) query = query.Where(record => record.AccountID == accountID);
-            if (categoryID != 0) query = query.Where(record => record.ProductCatogoryID == categoryID);
+            if (categoryIDs.Any()) query = query.Where(record => categoryIDs.Contains(record.ProductCatogoryID));
             if (!keyWord.IsNullOrEmpty())
             {
                 query = query.Where(record => record.ProductCatogory.CategoryName.ToLower().Contains(keyWord.ToLower())
@@ -173,6 +173,36 @@ namespace QLBH.Business
             pagination.TotalCount = query.Count();
             var result = PageResult<DataResponse_Product>.ToPageResult(pagination, data);
             return new PageResult<DataResponse_Product>(pagination, result);
+        }
+
+        public IEnumerable<DataResponse_Product> GetAll(string keyWord, long accountID = 0, List<long> categoryIDs = null, bool sale = false)
+        {
+            var query = _baseRepositoryProduct.GetQueryable(record => record.Deleted == false);
+            if (sale) query = query.Where(record => record.Sale == sale);
+            if (accountID != 0) query = query.Where(record => record.AccountID == accountID);
+            if (categoryIDs.Any()) query = query.Where(record => categoryIDs.Contains(record.ProductCatogoryID));
+            if (!keyWord.IsNullOrEmpty())
+            {
+                query = query.Where(record => record.ProductCatogory.CategoryName.ToLower().Contains(keyWord.ToLower())
+                        || record.Product_Name.ToLower().Contains(keyWord.ToLower()));
+            }
+            var data = query.Select(item => new DataResponse_Product
+            {
+                metaProduct = item.Meta_Product,
+                productID = item.ID,
+                categoryID = item.ProductCatogoryID,
+                username = item.Account != null ? item.Account.User_Name : null,
+                product_Name = item.Product_Name,
+                productDescription = item.Product_Description,
+                isNew = item.Is_New,
+                quantity = item.Quantity,
+                price = item.Price,
+                sale = item.Sale,
+                priceSale = item.Price_Sale,
+                evaluate = item.Evaluate,
+                imageProduct = imageURL(item.ImageProduct.ToList())
+            });
+            return data;
         }
     }
 }

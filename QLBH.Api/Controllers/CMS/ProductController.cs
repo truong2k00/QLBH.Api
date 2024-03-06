@@ -13,7 +13,7 @@ using System.Security.Permissions;
 
 namespace QLBH.Api.Controllers
 {
-    [Route(AppSettingKeys.DEFAULT_CONTROLER_RAUTER)]
+    [Route(DEFAULT_CONTROLER_RAUTER)]
     [ApiController]
     //
     public class ProductController : ControllerBase
@@ -39,25 +39,30 @@ namespace QLBH.Api.Controllers
         {
             await _productServices.Update(ID, product, Files);
         }
-        [HttpGet("GetAll-Product")]
-        public IActionResult GetAll([FromQuery] Request_Pagination pagination, [FromQuery] string keyWord, [FromQuery] long accountID = 0, [FromQuery] long categoryID = 0, [FromQuery] bool sale = false)
+        [HttpGet()]
+        public IActionResult GetAll([FromQuery] Request_Pagination pagination, [FromQuery] string keyWord, [FromQuery] long accountID = 0, [FromQuery] List<long> categoryIDs = null, [FromQuery] bool sale = false)
         {
             return Ok(_productServices.GetAll(new Pagination
             {
                 PageNumber = pagination.pageNumber,
                 PageSize = pagination.pageSize
-            }, keyWord, accountID, categoryID, sale));
+            }, keyWord, accountID, categoryIDs, sale));
         }
-        [HttpGet("GetAll")]
+        [HttpGet()]
+        public IActionResult GetAlls([FromQuery] List<long> categoryIDs, [FromQuery] string keyWord, [FromQuery] long accountID = 0,  [FromQuery] bool sale = false)
+        {
+            return Ok(_productServices.GetAll(keyWord, accountID, categoryIDs, sale));
+        }
+        [HttpGet()]
         [Authorize(RoleKeyString.Superuser, RoleKeyString.Editor, RoleKeyString.Guest, RoleKeyString.Manager)]
-        public IActionResult GetAll([FromQuery] Request_Pagination pagination, [FromQuery] string keyWord, [FromQuery] long categoryID = 0, bool sale = false)
+        public IActionResult GetByAll([FromQuery] Request_Pagination pagination, [FromQuery] string keyWord, [FromQuery] List<long> categoryIDs = null, bool sale = false)
         {
             long accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             return Ok(_productServices.GetAll(new Pagination
             {
                 PageNumber = pagination.pageNumber,
                 PageSize = pagination.pageSize
-            }, keyWord, accountID, categoryID, sale));
+            }, keyWord, accountID, categoryIDs, sale));
         }
         [HttpGet("GetByMeta/{meta}")]
         public IActionResult GetByMeta(string meta)

@@ -55,17 +55,18 @@ namespace QLBH.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductCatogory",
+                name: "ProductCategory",
                 columns: table => new
                 {
                     ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CatogoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductCatogory", x => x.ID);
+                    table.PrimaryKey("PK_ProductCategory", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
@@ -97,12 +98,12 @@ namespace QLBH.Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Addess_Receive",
+                name: "Address_Receive",
                 columns: table => new
                 {
                     ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Addess = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Full_Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Describe = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -113,13 +114,13 @@ namespace QLBH.Models.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Addess_Receive", x => x.ID);
+                    table.PrimaryKey("PK_Address_Receive", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Addess_Receive_Account_AccountID",
+                        name: "FK_Address_Receive_Account_AccountID",
                         column: x => x.AccountID,
                         principalTable: "Account",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -138,7 +139,7 @@ namespace QLBH.Models.Migrations
                         column: x => x.AccountID,
                         principalTable: "Account",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -149,6 +150,7 @@ namespace QLBH.Models.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Notification_Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Notification_Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    watched_at = table.Column<bool>(type: "bit", nullable: false),
                     AccountID = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -159,7 +161,7 @@ namespace QLBH.Models.Migrations
                         column: x => x.AccountID,
                         principalTable: "Account",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -170,7 +172,7 @@ namespace QLBH.Models.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Token = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Date_Expired = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AccountID = table.Column<long>(type: "bigint", nullable: true),
+                    AccountID = table.Column<long>(type: "bigint", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -180,7 +182,8 @@ namespace QLBH.Models.Migrations
                         name: "FK_RefeshToken_Account_AccountID",
                         column: x => x.AccountID,
                         principalTable: "Account",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -189,7 +192,7 @@ namespace QLBH.Models.Migrations
                 {
                     ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    VoucherId = table.Column<long>(type: "bigint", nullable: false),
+                    VoucherId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VoucherName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Release_Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Expiration_Date = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -207,7 +210,7 @@ namespace QLBH.Models.Migrations
                         column: x => x.AccountID,
                         principalTable: "Account",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -219,15 +222,14 @@ namespace QLBH.Models.Migrations
                     Product_Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Product_Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Meta_Product = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProductCatogoryID = table.Column<long>(type: "bigint", nullable: true),
+                    ProductCatogoryID = table.Column<long>(type: "bigint", nullable: false),
                     Is_New = table.Column<bool>(type: "bit", nullable: false),
                     Sale = table.Column<bool>(type: "bit", nullable: false),
                     Date_Delete = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Is_Deleted = table.Column<bool>(type: "bit", nullable: false),
                     Quantity = table.Column<long>(type: "bigint", nullable: false),
                     Price = table.Column<long>(type: "bigint", nullable: false),
-                    Price_Sale = table.Column<long>(type: "bigint", nullable: true),
-                    AccountID = table.Column<long>(type: "bigint", nullable: true),
+                    Price_Sale = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    AccountID = table.Column<long>(type: "bigint", nullable: false),
                     Evaluate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -238,12 +240,14 @@ namespace QLBH.Models.Migrations
                         name: "FK_Product_Account_AccountID",
                         column: x => x.AccountID,
                         principalTable: "Account",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_Product_ProductCatogory_ProductCatogoryID",
+                        name: "FK_Product_ProductCategory_ProductCatogoryID",
                         column: x => x.ProductCatogoryID,
-                        principalTable: "ProductCatogory",
-                        principalColumn: "ID");
+                        principalTable: "ProductCategory",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -265,13 +269,13 @@ namespace QLBH.Models.Migrations
                         column: x => x.AccountID,
                         principalTable: "Account",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Decentralization_Role_RoleID",
                         column: x => x.RoleID,
                         principalTable: "Role",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -283,7 +287,8 @@ namespace QLBH.Models.Migrations
                     Date_Create = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status_BillID = table.Column<long>(type: "bigint", nullable: false),
                     AccountID = table.Column<long>(type: "bigint", nullable: false),
-                    Addess_ReceiveID = table.Column<long>(type: "bigint", nullable: true),
+                    Address_ReceiveID = table.Column<long>(type: "bigint", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -294,18 +299,19 @@ namespace QLBH.Models.Migrations
                         column: x => x.AccountID,
                         principalTable: "Account",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_Bill_Addess_Receive_Addess_ReceiveID",
-                        column: x => x.Addess_ReceiveID,
-                        principalTable: "Addess_Receive",
-                        principalColumn: "ID");
+                        name: "FK_Bill_Address_Receive_Address_ReceiveID",
+                        column: x => x.Address_ReceiveID,
+                        principalTable: "Address_Receive",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Bill_Status_Bill_Status_BillID",
                         column: x => x.Status_BillID,
                         principalTable: "Status_Bill",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -318,8 +324,8 @@ namespace QLBH.Models.Migrations
                     Expired = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     AccountID = table.Column<long>(type: "bigint", nullable: false),
-                    Addess_ReceiveID = table.Column<long>(type: "bigint", nullable: true),
-                    MailSettingID = table.Column<long>(type: "bigint", nullable: true),
+                    Address_ReceiveID = table.Column<long>(type: "bigint", nullable: true),
+                    MailSettingID = table.Column<long>(type: "bigint", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -330,17 +336,18 @@ namespace QLBH.Models.Migrations
                         column: x => x.AccountID,
                         principalTable: "Account",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
-                        name: "FK_ConfirmEmail_Addess_Receive_Addess_ReceiveID",
-                        column: x => x.Addess_ReceiveID,
-                        principalTable: "Addess_Receive",
+                        name: "FK_ConfirmEmail_Address_Receive_Address_ReceiveID",
+                        column: x => x.Address_ReceiveID,
+                        principalTable: "Address_Receive",
                         principalColumn: "ID");
                     table.ForeignKey(
                         name: "FK_ConfirmEmail_MailSetting_MailSettingID",
                         column: x => x.MailSettingID,
                         principalTable: "MailSetting",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -349,9 +356,9 @@ namespace QLBH.Models.Migrations
                 {
                     ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountID = table.Column<long>(type: "bigint", nullable: true),
-                    ProductID = table.Column<long>(type: "bigint", nullable: true),
-                    Document = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountID = table.Column<long>(type: "bigint", nullable: false),
+                    ProductID = table.Column<long>(type: "bigint", nullable: false),
+                    Opinion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Datetime_Comment = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -362,12 +369,14 @@ namespace QLBH.Models.Migrations
                         name: "FK_Comment_Product_Account_AccountID",
                         column: x => x.AccountID,
                         principalTable: "Account",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Comment_Product_Product_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Product",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -380,7 +389,7 @@ namespace QLBH.Models.Migrations
                     ProductID = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<long>(type: "bigint", nullable: false),
                     Price = table.Column<long>(type: "bigint", nullable: false),
-                    Cash = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -390,13 +399,13 @@ namespace QLBH.Models.Migrations
                         column: x => x.CartID,
                         principalTable: "Cart",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Detail_Cart_Product_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Product",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -417,7 +426,7 @@ namespace QLBH.Models.Migrations
                         column: x => x.ProductID,
                         principalTable: "Product",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -440,13 +449,13 @@ namespace QLBH.Models.Migrations
                         column: x => x.AccountID,
                         principalTable: "Account",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_FeedBack_Product_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Product",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -466,7 +475,7 @@ namespace QLBH.Models.Migrations
                         column: x => x.ProductID,
                         principalTable: "Product",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -487,7 +496,7 @@ namespace QLBH.Models.Migrations
                         column: x => x.ProductID,
                         principalTable: "Product",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -498,8 +507,10 @@ namespace QLBH.Models.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductID = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<long>(type: "bigint", nullable: false),
-                    Cash = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    BillID = table.Column<long>(type: "bigint", nullable: false)
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BillID = table.Column<long>(type: "bigint", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -509,13 +520,13 @@ namespace QLBH.Models.Migrations
                         column: x => x.BillID,
                         principalTable: "Bill",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_Invoice_Details_Product_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Product",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -525,7 +536,7 @@ namespace QLBH.Models.Migrations
                     ID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     href = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Comment_ProductID = table.Column<long>(type: "bigint", nullable: true),
+                    Comment_ProductID = table.Column<long>(type: "bigint", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -535,12 +546,13 @@ namespace QLBH.Models.Migrations
                         name: "FK_Image_Comment_Comment_Product_Comment_ProductID",
                         column: x => x.Comment_ProductID,
                         principalTable: "Comment_Product",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addess_Receive_AccountID",
-                table: "Addess_Receive",
+                name: "IX_Address_Receive_AccountID",
+                table: "Address_Receive",
                 column: "AccountID");
 
             migrationBuilder.CreateIndex(
@@ -549,9 +561,9 @@ namespace QLBH.Models.Migrations
                 column: "AccountID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bill_Addess_ReceiveID",
+                name: "IX_Bill_Address_ReceiveID",
                 table: "Bill",
-                column: "Addess_ReceiveID");
+                column: "Address_ReceiveID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bill_Status_BillID",
@@ -579,9 +591,9 @@ namespace QLBH.Models.Migrations
                 column: "AccountID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConfirmEmail_Addess_ReceiveID",
+                name: "IX_ConfirmEmail_Address_ReceiveID",
                 table: "ConfirmEmail",
-                column: "Addess_ReceiveID");
+                column: "Address_ReceiveID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConfirmEmail_MailSettingID",
@@ -732,13 +744,13 @@ namespace QLBH.Models.Migrations
                 name: "Product");
 
             migrationBuilder.DropTable(
-                name: "Addess_Receive");
+                name: "Address_Receive");
 
             migrationBuilder.DropTable(
                 name: "Status_Bill");
 
             migrationBuilder.DropTable(
-                name: "ProductCatogory");
+                name: "ProductCategory");
 
             migrationBuilder.DropTable(
                 name: "Account");

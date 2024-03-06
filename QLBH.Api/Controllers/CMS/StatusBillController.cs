@@ -7,7 +7,7 @@ using static QLBH.Commons.Common_Constants;
 
 namespace QLBH.Api.Controllers
 {
-    [Route(AppSettingKeys.DEFAULT_CONTROLER_RAUTER)]
+    [Route(DEFAULT_CONTROLER_RAUTER)]
     [ApiController]
     public class StatusBillController : ControllerBase
     {

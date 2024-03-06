@@ -32,12 +32,19 @@ namespace QLBH.Business.CMS
 
         public async Task Create(DataRequest_ProductCategory data)
         {
-            var Entity = new ProductCategory
+            try
             {
-                CategoryName = data.categoryName,
-                Image = await _handleUpload.UploadImage(_contextAccessor.HttpContext.User.FindFirst(Clames.USER).Value, CloudUpoad.FolderImage.Folder_Category, data.files)
-            };
-            await _repository.CreateAsync(Entity);
+                var Entity = new ProductCategory
+                {
+                    CategoryName = data.categoryName,
+                    Image = await _handleUpload.UploadImage(_contextAccessor.HttpContext.User.FindFirst(Clames.USER).Value, CloudUpoad.FolderImage.Folder_Category, data.files)
+                };
+                await _repository.CreateAsync(Entity);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         public async Task Delete(long ID)
         {

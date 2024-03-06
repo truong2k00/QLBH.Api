@@ -12,8 +12,8 @@ using QLBH.Models;
 namespace QLBH.Models.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240218064120_update5")]
-    partial class update5
+    [Migration("20240305132219_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,7 +85,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Address")
@@ -124,10 +124,10 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("Address_ReceiveID")
+                    b.Property<long>("Address_ReceiveID")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("Date_Create")
@@ -136,8 +136,11 @@ namespace QLBH.Models.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("Status_BillID")
+                    b.Property<long>("Status_BillID")
                         .HasColumnType("bigint");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
 
@@ -158,7 +161,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.HasKey("ID");
@@ -176,7 +179,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("Datetime_Comment")
@@ -185,10 +188,10 @@ namespace QLBH.Models.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Document")
+                    b.Property<string>("Opinion")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ProductID")
+                    b.Property<long>("ProductID")
                         .HasColumnType("bigint");
 
                     b.HasKey("ID");
@@ -208,7 +211,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("Address_ReceiveID")
@@ -226,7 +229,7 @@ namespace QLBH.Models.Migrations
                     b.Property<bool>("IsConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("MailSettingID")
+                    b.Property<long>("MailSettingID")
                         .HasColumnType("bigint");
 
                     b.HasKey("ID");
@@ -248,13 +251,13 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("RoleID")
+                    b.Property<long>("RoleID")
                         .HasColumnType("bigint");
 
                     b.Property<int>("role")
@@ -277,20 +280,20 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("CartID")
+                    b.Property<long>("CartID")
                         .HasColumnType("bigint");
-
-                    b.Property<decimal>("Cash")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("ProductID")
+                    b.Property<long>("ProductID")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("Quantity")
+                    b.Property<long>("Quantity")
                         .HasColumnType("bigint");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
 
@@ -315,7 +318,7 @@ namespace QLBH.Models.Migrations
                     b.Property<string>("Introduce")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ProductID")
+                    b.Property<long>("ProductID")
                         .HasColumnType("bigint");
 
                     b.HasKey("ID");
@@ -333,7 +336,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.Property<string>("FeedBack_Quality")
@@ -342,7 +345,7 @@ namespace QLBH.Models.Migrations
                     b.Property<string>("Opinion")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ProductID")
+                    b.Property<long>("ProductID")
                         .HasColumnType("bigint");
 
                     b.Property<int>("star")
@@ -368,7 +371,7 @@ namespace QLBH.Models.Migrations
                     b.Property<string>("Image_Url")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ProductID")
+                    b.Property<long>("ProductID")
                         .HasColumnType("bigint");
 
                     b.HasKey("ID");
@@ -386,7 +389,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("Comment_ProductID")
+                    b.Property<long>("Comment_ProductID")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("Deleted")
@@ -410,17 +413,23 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("BillID")
+                    b.Property<long>("BillID")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("Cash")
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long?>("ProductID")
+                    b.Property<long>("ProductID")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("Quantity")
+                    b.Property<long>("Quantity")
                         .HasColumnType("bigint");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
 
@@ -470,7 +479,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Notification_Description")
@@ -497,7 +506,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("Date_Delete")
@@ -509,9 +518,6 @@ namespace QLBH.Models.Migrations
                     b.Property<decimal>("Evaluate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<bool>("Is_Deleted")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("Is_New")
                         .HasColumnType("bit");
 
@@ -521,10 +527,10 @@ namespace QLBH.Models.Migrations
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("Price_Sale")
-                        .HasColumnType("bigint");
+                    b.Property<decimal>("Price_Sale")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<long?>("ProductCatogoryID")
+                    b.Property<long>("ProductCatogoryID")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Product_Description")
@@ -578,7 +584,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("Date_Expired")
@@ -646,7 +652,7 @@ namespace QLBH.Models.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("ProductID")
+                    b.Property<long>("ProductID")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Type_Name")
@@ -667,7 +673,7 @@ namespace QLBH.Models.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("AccountID")
+                    b.Property<long>("AccountID")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("Deleted")
@@ -685,8 +691,8 @@ namespace QLBH.Models.Migrations
                     b.Property<DateTime>("Release_Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("VoucherId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("VoucherId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VoucherName")
                         .HasColumnType("nvarchar(max)");
@@ -705,7 +711,9 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("Address_Receive")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
                 });
@@ -714,15 +722,21 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("Bill")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("QLBH.Models.Entities.Address_Receive", "Address_Receive")
                         .WithMany("Bill")
-                        .HasForeignKey("Address_ReceiveID");
+                        .HasForeignKey("Address_ReceiveID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("QLBH.Models.Entities.Status_Bill", "Status_Bill")
                         .WithMany("Bill")
-                        .HasForeignKey("Status_BillID");
+                        .HasForeignKey("Status_BillID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
 
@@ -735,7 +749,9 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("Cart")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
                 });
@@ -744,11 +760,15 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany()
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("QLBH.Models.Entities.Product", "Product")
                         .WithMany("Comment_Product")
-                        .HasForeignKey("ProductID");
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
 
@@ -759,7 +779,9 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("ConfirmEmail")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("QLBH.Models.Entities.Address_Receive", "Address_Receive")
                         .WithMany("ConfirmEmail")
@@ -767,7 +789,9 @@ namespace QLBH.Models.Migrations
 
                     b.HasOne("QLBH.Models.Entities.MailSetting", "MailSetting")
                         .WithMany("ConfirmEmail")
-                        .HasForeignKey("MailSettingID");
+                        .HasForeignKey("MailSettingID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
 
@@ -780,11 +804,15 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("Decentralizations")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("QLBH.Models.Entities.Role", "Role")
                         .WithMany("Decentralization")
-                        .HasForeignKey("RoleID");
+                        .HasForeignKey("RoleID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
 
@@ -795,11 +823,15 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Cart", "Cart")
                         .WithMany("Detail_Cart")
-                        .HasForeignKey("CartID");
+                        .HasForeignKey("CartID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("QLBH.Models.Entities.Product", "Product")
                         .WithMany("Detail_Cart")
-                        .HasForeignKey("ProductID");
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Cart");
 
@@ -810,7 +842,9 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Product", "Product")
                         .WithMany("Details")
-                        .HasForeignKey("ProductID");
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
                 });
@@ -819,11 +853,15 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("FeedBack")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("QLBH.Models.Entities.Product", "Product")
                         .WithMany("FeedBack")
-                        .HasForeignKey("ProductID");
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
 
@@ -834,7 +872,9 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Product", "Product")
                         .WithMany("ImageProduct")
-                        .HasForeignKey("ProductID");
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
                 });
@@ -843,7 +883,9 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Comment_Product", "Comment_Product")
                         .WithMany("Image_Comment")
-                        .HasForeignKey("Comment_ProductID");
+                        .HasForeignKey("Comment_ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Comment_Product");
                 });
@@ -852,11 +894,15 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Bill", "Bill")
                         .WithMany("Invoice_Details")
-                        .HasForeignKey("BillID");
+                        .HasForeignKey("BillID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("QLBH.Models.Entities.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductID");
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Bill");
 
@@ -867,7 +913,9 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("Notification")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
                 });
@@ -876,11 +924,15 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("Product")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("QLBH.Models.Entities.ProductCategory", "ProductCatogory")
                         .WithMany("Product")
-                        .HasForeignKey("ProductCatogoryID");
+                        .HasForeignKey("ProductCatogoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
 
@@ -891,7 +943,9 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("RefeshToken")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
                 });
@@ -900,18 +954,22 @@ namespace QLBH.Models.Migrations
                 {
                     b.HasOne("QLBH.Models.Entities.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductID");
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
                 });
 
             modelBuilder.Entity("QLBH.Models.Entities.Voucher", b =>
                 {
-                    b.HasOne("QLBH.Models.Entities.Account", "Acount")
+                    b.HasOne("QLBH.Models.Entities.Account", "Account")
                         .WithMany("Voucher")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Acount");
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("QLBH.Models.Entities.Account", b =>

@@ -27,12 +27,14 @@ namespace QLBH.Commons
                 {
                     throw new ArgumentNullException(Common_Constants.CloudUpoad.IsNull_IFormFile);
                 }
+                var a = _configuration.GetSection(Common_Constants.CloudUpoad.FolderSystem).Value;
+                var b = _configuration.GetConnectionString(Common_Constants.CloudUpoad.FolderSystem);
                 using (var stream = file.OpenReadStream())
                 {
                     var uploadParams = new ImageUploadParams
                     {
                         File = new FileDescription(file.FileName, stream),
-                        PublicId = $"{_configuration.GetSection(Common_Constants.CloudUpoad.FolderSystem).Value} / {typeFolder}/{user} + {Common_Constants.CloudUpoad.Sourc_NewImage}{DateTime.Now.Ticks}image",
+                        PublicId = $"{_configuration.GetSection(Common_Constants.CloudUpoad.FolderSystem).Value}/{typeFolder}/{user}/{Common_Constants.CloudUpoad.Sourc_NewImage}{DateTime.Now.Ticks}image",
                         Transformation = new Transformation().Width(300).Height(400).Crop("fill")
                     };
                     var uploadResult = await _cloudinary.UploadAsync(uploadParams);

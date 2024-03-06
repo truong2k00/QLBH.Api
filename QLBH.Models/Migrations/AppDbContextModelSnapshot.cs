@@ -280,9 +280,6 @@ namespace QLBH.Models.Migrations
                     b.Property<long>("CartID")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("Cash")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<long>("Price")
                         .HasColumnType("bigint");
 
@@ -291,6 +288,9 @@ namespace QLBH.Models.Migrations
 
                     b.Property<long>("Quantity")
                         .HasColumnType("bigint");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ID");
 

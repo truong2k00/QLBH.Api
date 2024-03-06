@@ -76,7 +76,7 @@ namespace QLBH.Business
             return await _InvoiceDetailsServices.GetAsync(reocrd => reocrd.ID == Id);
         }
 
-        public async Task Update(long accountId, long invoiceId, DataRequest_InvoidDetails data)
+        public async Task Update(long accountId, long invoiceId, DataRequest_InvoiceDetails data)
         {
             try
             {

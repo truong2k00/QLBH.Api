@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace QLBH.Models
 {
-    public class DataRequest_InvoidDetails
+    public class DataRequest_InvoiceDetails
     {
         public long productID { get; set; }
         public long quantity { get; set; }

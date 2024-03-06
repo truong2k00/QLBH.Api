@@ -11,7 +11,7 @@ namespace QLBH.Business
 {
     public interface IInvoiceDetailsServices
     {
-        Task Update(long accountId,long invoiceId,DataRequest_InvoidDetails data);
+        Task Update(long accountId,long invoiceId, DataRequest_InvoiceDetails data);
         Task Delete(long ID);
         Task DeleteAsync(long billId);
         IEnumerable<DataResponse_InvoiceDetail> GetAll(long idBill);

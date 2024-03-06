@@ -8,7 +8,7 @@ using static QLBH.Commons.Common_Constants;
 
 namespace QLBH.Api.Controllers
 {
-    [Route(AppSettingKeys.DEFAULT_CONTROLER_RAUTER)]
+    [Route(DEFAULT_CONTROLER_RAUTER)]
     [ApiController]
     [Authorize]
     public class FeedbackController : ControllerBase
@@ -19,28 +19,28 @@ namespace QLBH.Api.Controllers
         {
             _feedbackServices = feedbackServices;
         }
-        [HttpPost("Create")]
+        [HttpPost()]
         [Authorize]
         public async Task Create([FromBody] Request_Feedback feedback)
         {
             feedback.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             await _feedbackServices.Create(feedback);
         }
-        [HttpPut("Update/{AddressID}")]
+        [HttpPut("{addressId}")]
         [Authorize]
-        public async Task Update(long AddressID, [FromBody] Request_Feedback feedback)
+        public async Task Update(long addressId, [FromBody] Request_Feedback feedback)
         {
             feedback.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
-            await _feedbackServices.Update(AddressID, feedback);
+            await _feedbackServices.Update(addressId, feedback);
         }
-        [HttpDelete("Delete/{AddressID}")]
+        [HttpDelete("{addressId}")]
         [Authorize(RoleKeyString.Admin)]
-        public async Task Delete(long AddressID)
+        public async Task Delete(long addressId)
         {
-            await _feedbackServices.Delete(AddressID);
+            await _feedbackServices.Delete(addressId);
         }
-        [HttpGet("Get")]
-        public IActionResult Get([FromQuery] long acountId = 0, [FromQuery] long productID = 0)
+        [HttpGet()]
+        public IActionResult GetAll([FromQuery] long acountId = 0, [FromQuery] long productID = 0)
         {
             return Ok(_feedbackServices.GetAll(acountId, productID));
         }

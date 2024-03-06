@@ -10,7 +10,7 @@ namespace QLBH.Models
     {
         public long statusBillID { get; set; }
         public long accountID { get; set; }
-        public List<DataRequest_InvoidDetails> invoiceDetail { get; set; }
+        public List<DataRequest_InvoiceDetails> invoiceDetail { get; set; }
         public long addressReceiveID { get; set; }
     }
 }

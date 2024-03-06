@@ -8,7 +8,7 @@ using static QLBH.Commons.Common_Constants;
 
 namespace QLBH.Api.Controllers
 {
-    [Route(AppSettingKeys.DEFAULT_CONTROLER_RAUTER)]
+    [Route(DEFAULT_CONTROLER_RAUTER)]
     [ApiController]
     public class BillsController : ControllerBase
     {
@@ -21,14 +21,14 @@ namespace QLBH.Api.Controllers
             _invoiceServices = invoiceServices;
         }
         #region GetBill
-        [HttpGet("GetBill")]
-        public IActionResult GetBillAsync()
+        [HttpGet()]
+        public IActionResult GetAllBill()
         {
             return Ok(_billServices.GetBillAsync());
         }
 
 
-        [HttpGet("GetBillDelete")]
+        [HttpGet()]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Manager)]
         public IActionResult GetBill([FromQuery] bool IsDelete = false)
         {
@@ -36,7 +36,7 @@ namespace QLBH.Api.Controllers
         }
 
 
-        [HttpGet("GetBillDelete/{accountId}")]
+        [HttpGet("{accountId}")]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Manager)]
         public IActionResult GetBill(long accountId, [FromQuery] bool IsDelete = false)
         {
@@ -44,7 +44,7 @@ namespace QLBH.Api.Controllers
         }
 
 
-        [HttpGet("GetBillAccount")]
+        [HttpGet()]
         [Authorize(RoleKeyString.User)]
         public IActionResult GetBillAccount()
         {
@@ -52,7 +52,7 @@ namespace QLBH.Api.Controllers
         }
 
 
-        [HttpGet("GetBill/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(long id)
         {
             return Ok(await _billServices.GetByIDAsync(id));
@@ -60,50 +60,56 @@ namespace QLBH.Api.Controllers
         #endregion
 
 
-        [HttpPost("Create")]
+        [HttpPost()]
         [Authorize(RoleKeyString.User, RoleKeyString.Guest, RoleKeyString.Superuser, RoleKeyString.Guest)]
-        public async Task Create([FromQuery] DataRequest_Bill data)
+        public async Task<IActionResult> Create([FromQuery] DataRequest_Bill data)
         {
             data.accountID = long.Parse(HttpContext.User.FindFirst(Clames.ID).Value);
             await _billServices.Create(data);
+            return Ok();
         }
 
 
-        [HttpPut("Update/{id}")]
-        public async Task Update(long id)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(long id)
         {
             await _billServices.Update(id);
+            return Ok();
         }
 
 
-        [HttpDelete("Delete/{id}")]
-        public async Task Delete(long id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(long id)
         {
             await _billServices.Delete(id);
+            return Ok();
         }
 
 
-        [HttpDelete("InvoiceDelete/{invoiceId}")]
-        public async Task DeleteInvoice(long invoiceId)
+        [HttpDelete("{invoiceId}")]
+        public async Task<IActionResult> DeleteInvoice(long invoiceId)
         {
             await _billServices.DeleteInvoice(invoiceId);
+            return Ok();
         }
 
 
         //Invoice Bill
-        [HttpPut("InvoiceUpdate/{id}")]
+        [HttpPut("{id}")]
         [Authorize]
-        public async Task Update(long id, [FromQuery] DataRequest_InvoidDetails dataRequest_)
+        public async Task<IActionResult> UpdateInvoice(long id, [FromQuery] DataRequest_InvoiceDetails dataRequest_)
         {
             await _invoiceServices.Update(long.Parse(HttpContext.User.FindFirst(Clames.ID).Value), id, dataRequest_);
+            return Ok();
         }
 
 
-        [HttpPut("Admin/InvoiceUpdate/{id}")]
+        [HttpPut("{id}")]
         [Authorize(RoleKeyString.Admin, RoleKeyString.Manager)]
-        public async Task UpdateAsync(long id, [FromQuery] DataRequest_InvoidDetails dataRequest_)
+        public async Task<IActionResult> UpdateInvoce(long id, [FromQuery] DataRequest_InvoiceDetails dataRequest_)
         {
             await _invoiceServices.Update(0, id, dataRequest_);
+            return Ok();
         }
     }
 }

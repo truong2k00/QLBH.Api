@@ -7,7 +7,7 @@ using static QLBH.Commons.Common_Constants;
 
 namespace QLBH.Api.Controllers
 {
-    [Route(AppSettingKeys.DEFAULT_CONTROLER_RAUTER)]
+    [Route(DEFAULT_CONTROLER_RAUTER)]
     [ApiController]
     public class ProductCategoryController : ControllerBase
     {
@@ -23,7 +23,7 @@ namespace QLBH.Api.Controllers
             return Ok(_services.GetAll());
         }
         [HttpPost("Create")]
-        [Authorize(RoleKeyString.Admin, RoleKeyString.Manager, RoleKeyString.Editor)]
+        [Authorize]
         public async Task<IActionResult> Create([FromQuery] DataRequest_ProductCategory dataRequest_)
         {
             await _services.Create(dataRequest_);
